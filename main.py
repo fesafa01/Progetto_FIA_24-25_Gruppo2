@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import matplotlib as plot
+import random
+from classificatore_KNN import classificatore_KNN 
 
 #Carichiamo il dataset assegnato
 dataset = pd.read_csv("version_1.csv")
