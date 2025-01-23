@@ -7,14 +7,32 @@ import numpy as np
 
 class Holdout:
         
-    #Definiamo la dimensione dello splitting dei dati
-    def __init__(self, test_size):
+    def __init__(self, test_size=0.3):
+        '''
+        Costruttore della classe Holdout
+        :param test_size: float, valore percentuale che rappresenta la 
+        dimensione del test set rispetto all'intero set di dati, di default è 0.3
+        in output non ritorna nulla
+
+        '''
         if not 0 < test_size < 1:
             raise ValueError("test_size deve essere compreso tra 0 e 1.")
         self.test_size = test_size
 
-    #Funzione per lo splitting dei dati, riceve in ingresso features (X) e label (y) ed effettua lo splitting
+    
     def splitter(self, X, y):
+        ''' 
+        Funzione per lo splitting dei dati, riceve in ingresso features (X) e label (y) ed effettua lo splitting
+        in training e test set
+        :param X: pandas DataFrame, features del dataset
+        :param y: pandas Series, label del dataset
+
+        :return: X_train: pandas DataFrame, features del training set
+        :return: X_test: pandas DataFrame, features del test set
+        :return: y_train: pandas Series, label del training set
+        :return: y_test: pandas Series, label del test set
+        '''    
+            
         # Calcola il numero di campioni per il test set
         test_size = int(len(X) * self.test_size)
         

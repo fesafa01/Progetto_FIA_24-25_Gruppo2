@@ -20,7 +20,7 @@ dataset = Preprocessing(dataset).drop_nan_target("classtype_v1")
 dataset = Preprocessing(dataset).interpolate("linear")
 
 # Elimino la prima colonna relativa al numero di osservazioni
-dataset =  Preprocessing(dataset).drop_column("Unnamed: 0")
+dataset = dataset.iloc[:, 1:]
 
 # Normalizzo i dati
 dataset = Preprocessing(dataset).normalize_data(dataset)
