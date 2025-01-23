@@ -1,7 +1,11 @@
+# Funzione che implementa un classificatore K-Nearest Neighbors (KNN) per la classificazione di un dataset.
+# Il classificatore KNN è un algoritmo di apprendimento supervisionato che classifica un punto di dati in base ai suoi vicini più vicini.
+
 import numpy as np
 import random
 
 class classificatore_KNN:
+    
     def __init__(self, X, y, k=3, fun_distanza=None):
         self.k = k  # Numero di vicini considerati
         self.X_train = X  # Carica dati di training
@@ -11,6 +15,7 @@ class classificatore_KNN:
             self.fun_distanza = fun_distanza
         else: self.fun_distanza = self.distanza_euclidea
 
+    # Funzione per calcolare la distanza euclidea tra due punti x1 e x2 
     def distanza_euclidea(self, x1, x2):
         return np.sqrt(np.sum((x1 - x2) ** 2))
 
