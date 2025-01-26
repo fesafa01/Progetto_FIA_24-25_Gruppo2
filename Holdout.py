@@ -21,34 +21,36 @@ class Holdout:
 
     
     def splitter(self, X, y):
-        ''' 
-        Funzione per lo splitting dei dati, riceve in ingresso features (X) e label (y) ed effettua lo splitting
-        in training e test set
+        '''
+        Divide il dataset in training e test set.
+
         :param X: pandas DataFrame, features del dataset
-        :param y: pandas Series, label del dataset
+        :param y: pandas Series, target del dataset
 
-        :return: X_train: pandas DataFrame, features del training set
-        :return: X_test: pandas DataFrame, features del test set
-        :return: y_train: pandas Series, label del training set
-        :return: y_test: pandas Series, label del test set
-        '''    
-            
-        # Calcola il numero di campioni per il test set
-        test_size = int(len(X) * self.test_size)
-        
-        # Divido X in train e test
-        test_indices = X[:test_size]
-        train_indices = X[test_size:]
+        :return: X_train, X_test, y_train, y_test
+        '''
 
-        #Controllo se X e y sono vuoti
+        # Controllo se X e y sono vuoti
         if X.empty or y.empty:
             raise ValueError("X e y non possono essere vuoti.")
 
-        
-        # Suddivisione del dataset
-        X_train = X.iloc[train_indices]
-        X_test = X.iloc[test_indices]
-        y_train = y.iloc[train_indices]
-        y_test = y.iloc[test_indices]
-     
+        # Controllo che X e y abbiano la stessa lunghezza
+        if len(X) != len(y):
+            raise ValueError("X e y devono avere la stessa lunghezza.")
+
+        # Shuffle degli indici
+        indices = np.arange(len(X))  # Genera un array di indici numerici
+        np.random.shuffle(indices)
+
+        # Calcola il numero di campioni per il test set
+        test_size = int(len(X) * self.test_size)
+
+        # Divisione degli indici numerici in train e test
+        train_indices = indices[test_size:]  # Indici per il training set
+        test_indices = indices[:test_size]   # Indici per il test set
+
+        # Suddivisione del dataset usando .iloc con indici numerici validi
+        X_train, X_test = X.iloc[train_indices], X.iloc[test_indices]
+        y_train, y_test = y.iloc[train_indices], y.iloc[test_indices]
+
         return X_train, X_test, y_train, y_test
