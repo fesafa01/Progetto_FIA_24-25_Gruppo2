@@ -1,10 +1,38 @@
-# Ignora i file temporanei di sistema
+# Sistema operativo
 .DS_Store
 Thumbs.db
 
-# Ignora i file di log e di debug
-*.log
-
-# pychache
+# Python
 __pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+
+# Node.js
+node_modules/
+
+# IDEs e editori di testo
 .idea/
+.vscode/
+
+# File di configurazione segreti
+.env
+
+# Directory dei dati e dei risultati
+data/
+results/
+logs/
+temp/
+
+# Output temporanei o compilati
+*.tmp
+*.log
+*.out
+*.err
+
+# Cartelle di build o output
+build/
+dist/
+
