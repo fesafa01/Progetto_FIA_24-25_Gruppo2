@@ -7,3 +7,4 @@ Thumbs.db
 
 # pychache
 __pycache__/
+.idea/
