@@ -1,0 +1,9 @@
+# Ignora i file temporanei di sistema
+.DS_Store
+Thumbs.db
+
+# Ignora i file di log e di debug
+*.log
+
+# pychache
+__pycache__/
