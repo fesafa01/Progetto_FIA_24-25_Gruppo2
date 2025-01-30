@@ -84,7 +84,7 @@ class RandomSubsampling:
             y_pred = knn.predict(X_test)
 
             # Calcolo dell'accuratezza basata sul numero di predizioni corrette
-            correct = len(y_test)-sum(y_pred - y_test) # Conta il numero di predizioni corrette
-            accuracies.append(correct / len(y_test))
+            correct = sum(y_pred == y_test)  # Conta il numero di predizioni corrette
+            accuracies.append(correct / len(y_test))  # Calcola l'accuratezza come rapporto tra corrette e totale
         
         return np.mean(accuracies)
