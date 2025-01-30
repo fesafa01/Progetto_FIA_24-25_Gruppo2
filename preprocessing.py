@@ -98,28 +98,28 @@ class Preprocessing:
         return self.dataset
 
     
-    def normalize_data(self, dataset):
+    def normalize_data(self, X):
         '''
-        Normalizzazione Min-Max per ogni colonna numerica (dalla seconda colonna in poi).
+        Normalizzazione Min-Max per le features del modello.
         
         La formula è: (X - X.min()) / (X.max() - X.min())
 
-        :param dataset: pandas DataFrame
-        :return: pandas DataFrame normalizzato
+        :param X: features del modello
+        :return X: features del modello normalizzate
         '''
         # Converte i tipi oggetto in tipi appropriati (evita l'errore di interpolazione)
-        dataset = dataset.infer_objects(copy=False)
+        X = X.infer_objects(copy=False)
 
         # Seleziona solo colonne numeriche dalla seconda colonna alla penultima
-        numeric_cols = dataset.iloc[:, 1:].select_dtypes(include=['number'])
+        numeric_cols = X.iloc[:, 1:].select_dtypes(include=['number'])
 
         # Applica la normalizzazione Min-Max solo alle colonne numeriche
         normalized_columns = numeric_cols.apply(lambda col: (col - col.min()) / (col.max() - col.min()))
 
         # Mantieni la prima colonna e unisci le colonne normalizzate
-        self.dataset = pd.concat([dataset.iloc[:, [0]], normalized_columns, dataset.iloc[:, [-1]]], axis=1)
+        self.X = pd.concat([X.iloc[:, [0]], normalized_columns], axis=1)
 
-        return self.dataset
+        return self.X
 
 
     
@@ -139,8 +139,5 @@ class Preprocessing:
         # Separazione di features (X) e target (y)
         X = dataset_no_first_col.drop(columns=[target])
         y = dataset_no_first_col[target]
-
-        # Ricombina la prima colonna se necessario (opzionale, per riferimento futuro)
-        self.dataset = pd.concat([first_column, X, y], axis=1)
 
         return X, y

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from classificatore_KNN import classificatore_KNN
 
 #Implementazione del metodo di validazione Holdout, che divide il dataset in due parti: training e test set
 # in particolare, il test set è una porzione del dataset che non verrà utilizzata per l'addestramento del modello
@@ -20,14 +21,15 @@ class Holdout:
         self.test_size = test_size
 
     
-    def splitter(self, X, y):
+    def split_and_evaluate(self, k, X, y):
         '''
-        Divide il dataset in training e test set.
+        Divide il dataset in training e test set e valuta il modello KNN
 
+        :param k: int, numero di vicini da considerare per il classificatore KNN
         :param X: pandas DataFrame, features del dataset
         :param y: pandas Series, target del dataset
 
-        :return: X_train, X_test, y_train, y_test
+        :return: float, accuratezza del modello KNN
         '''
 
         # Controllo se X e y sono vuoti
@@ -53,4 +55,17 @@ class Holdout:
         X_train, X_test = X.iloc[train_indices], X.iloc[test_indices]
         y_train, y_test = y.iloc[train_indices], y.iloc[test_indices]
 
-        return X_train, X_test, y_train, y_test
+         # si crea il KNN con il parametro k specifico per l'iterazione a cui ci troviamo
+        knn = classificatore_KNN(k)
+            
+        # si allena il modello sul training set specifico per l'iterazione a cui ci troviamo
+        knn.fit(X_train, y_train)
+            
+        # si fa una predizione su y
+        y_pred = knn.predict(X_test) 
+
+        # si calcola l'accuratezza
+        accuracy = np.mean(y_pred == y_test)
+
+        return accuracy 
+    
