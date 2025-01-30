@@ -6,6 +6,7 @@ Spazio di lavoro per lo sviluppo del progetto del corso di Fondamenti di Intelli
 ## Funzionalità
 - Selezione interattiva nella scelta del modello da applicare per dividere il dataset ed eventuali parametri caratteristici di questi modelli.
 - Holdout: metodo che permette la suddivisione di features e labels in train e test usati per l'addestramento e la valutazione del modello.
+- Random Subsampling: metodo che suddivide il dataset in training e test set più volte in modo casuale per ottenere una valutazione più stabile delle prestazioni del modello.
 - Classificatore k-NN: Un modello che predice le etichette dei dati basandosi sui k nearest neighbours, utilizzando la distanza euclidea (modificabile se necessario).
 
 ## Utilizzo
@@ -17,6 +18,7 @@ Per utilizzare il classificatore k-NN, seguire questi passaggi:
 ## Dipendenze
 - Python (3.x)
 - Numpy
+- Pandas
 - Random
 
 ## Autori

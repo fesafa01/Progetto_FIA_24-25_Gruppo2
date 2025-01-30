@@ -7,6 +7,7 @@ from model_selection import ModelSelection as ms
 import random
 from classificatore_KNN import classificatore_KNN 
 from Holdout import Holdout
+from RandomSubsampling import RandomSubsampling
 
 # Definiamo il nome del file su cui lavorare
 filename = "version_1.csv"
@@ -54,6 +55,11 @@ elif choice == "2":
         pass
 elif choice == "3":
         # Metodo 3
-        pass
+        test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
+        k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
+        num_splits = int(input("Inserisci il numero di splits da realizzare nel metodo: "))
+        random_subsampling = RandomSubsampling(test_size, num_splits)
+        accuracy = random_subsampling.run(X, y, k)
+        print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
 else:
         print("Scelta non valida. Riprova.")
