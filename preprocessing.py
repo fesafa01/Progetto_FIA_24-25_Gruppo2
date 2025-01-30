@@ -107,19 +107,13 @@ class Preprocessing:
         :param X: features del modello
         :return X: features del modello normalizzate
         '''
-        # Converte i tipi oggetto in tipi appropriati (evita l'errore di interpolazione)
-        X = X.infer_objects(copy=False)
+        # Converte tutto a numerico e fornisce NaN per valori non convertibili
+        X = X.apply(pd.to_numeric, errors='coerce')
 
-        # Seleziona solo colonne numeriche dalla seconda colonna alla penultima
-        numeric_cols = X.iloc[:, 1:].select_dtypes(include=['number'])
+        # Applica la normalizzazione Min-Max solo se i valori sono numerici
+        X = (X - X.min()) / (X.max() - X.min())
 
-        # Applica la normalizzazione Min-Max solo alle colonne numeriche
-        normalized_columns = numeric_cols.apply(lambda col: (col - col.min()) / (col.max() - col.min()))
-
-        # Mantieni la prima colonna e unisci le colonne normalizzate
-        self.X = pd.concat([X.iloc[:, [0]], normalized_columns], axis=1)
-
-        return self.X
+        return X
 
 
     
