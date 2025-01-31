@@ -10,7 +10,6 @@ from Holdout import Holdout
 from leave_one_out import leave_one_out
 from RandomSubsampling import RandomSubsampling
 
-
 # Definiamo il nome del file su cui lavorare
 filename = "version_1.csv"
 
@@ -62,12 +61,12 @@ elif choice == "2":
         print("Metriche Totali:", metriche)
 
 elif choice == "3":
-        # Metodo 3
+        # Metodo Random Subsampling
         test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
         k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
         num_splits = int(input("Inserisci il numero di splits da realizzare nel metodo: "))
-        random_subsampling = RandomSubsampling(test_size, num_splits)
-        accuracy = random_subsampling.run(X, y, k)
+        random_subsampling = RandomSubsampling(test_size, num_splits) #Inizializzazione
+        accuracy = random_subsampling.run(X, y, k) #Run del metodo, restituisce accuracy del modello
         print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
 else:
         print("Scelta non valida. Riprova.")
