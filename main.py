@@ -7,6 +7,7 @@ from model_selection import ModelSelection as ms
 import random
 from classificatore_KNN import classificatore_KNN 
 from Holdout import Holdout
+from leave_one_out import leave_one_out
 from RandomSubsampling import RandomSubsampling
 
 # Definiamo il nome del file su cui lavorare
@@ -50,16 +51,24 @@ if choice == "1":
     holdout = Holdout(test_size)
     accuracy = holdout.split_and_evaluate(k, X, y)
     print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
+
 elif choice == "2":
         # Metodo Leave One Out
-        pass
+        Leave_one_out = leave_one_out(X,y,k=3)
+        #Calculator = metrics_calculator()
+        #metriche = Metrics_calculator.metrics_evaluation(predicted_value, actual_value)
+        metriche = Leave_one_out.split_and_run()
+        print("Metriche Totali:", metriche)
+
 elif choice == "3":
-        # Metodo 3
+        # Metodo Random Subsampling
         test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
         k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
         num_splits = int(input("Inserisci il numero di splits da realizzare nel metodo: "))
-        random_subsampling = RandomSubsampling(test_size, num_splits)
-        accuracy = random_subsampling.run(X, y, k)
+        random_subsampling = RandomSubsampling(test_size, num_splits) #Inizializzazione
+        accuracy = random_subsampling.run(X, y, k) #Run del metodo, restituisce accuracy del modello
         print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
 else:
         print("Scelta non valida. Riprova.")
+
+
