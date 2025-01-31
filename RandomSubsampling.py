@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from classificatore_KNN import classificatore_KNN
+from metrics_calculator import metrics_calculator
 
 """
 Questo modulo implementa il metodo di Random Subsampling per la valutazione di un modello di classificazione.
@@ -71,9 +72,14 @@ class RandomSubsampling:
         :param y: pandas Series, target del dataset
         :param k: numero di vicini per KNN
         
-        :return (float): accuratezza media
+        :return: 
+        - actual_value: lista contenente i valori reali delle classi nei vari test set.
+        - predicted_value: lista contenente i valori predetti dal modello per i vari test set.
         """
-        accuracies = []
+    
+        # inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
+        actual_value=[]
+        predicted_value=[]
         splits = self.splitter(X, y)
         
         for X_train, X_test, y_train, y_test in splits:
@@ -84,7 +90,39 @@ class RandomSubsampling:
             y_pred = knn.predict(X_test)
 
             # Calcolo dell'accuratezza basata sul numero di predizioni corrette
-            correct = sum(y_pred == y_test)  # Conta il numero di predizioni corrette
-            accuracies.append(correct / len(y_test))  # Calcola l'accuratezza come rapporto tra corrette e totale
+            #correct = sum(y_pred == y_test)  # Conta il numero di predizioni corrette
+            #accuracies.append(correct / len(y_test))  # Calcola l'accuratezza come rapporto tra corrette e totale
+
+            # accumulo i valori all'interno dei due array
+            actual_value.append(y_test)
+            predicted_value.append(y_pred)
         
-        return np.mean(accuracies)
+        return actual_value, predicted_value
+
+    def evaluate(self,X,y,k=3):
+        """
+        Metodo per valutare le prestazioni del modello KNN utilizzando il metodo Random Subsampling.
+
+        :param X: pandas DataFrame, rappresenta le feature del dataset.
+        :param y: pandas Series, rappresenta le etichette di classe del dataset.
+        :param k: int, numero di vicini da considerare per il classificatore KNN (default = 3).
+
+        :return: dict, dizionario contenente le metriche di valutazione del modello.
+        """
+        # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
+        actual_value, predicted_value = self.run(X,y,k)
+        
+        # Convertiamo le liste di pandas Series in array numpy monodimensionali
+        actual_value = np.concatenate(actual_value).ravel()
+        predicted_value = np.concatenate(predicted_value).ravel()
+        
+        # creiamo un'istanza della classe che calcola le metriche di valutazione del modello
+        Calculator = metrics_calculator()
+        
+        # calcoliamo la matrice di confusione
+        matrix = Calculator.confusion_matrix(predicted_value, actual_value)
+        
+        # calcoliamo le metriche
+        metriche = Calculator.metrics_evalutation(matrix, predicted_value, actual_value)
+        
+        return metriche

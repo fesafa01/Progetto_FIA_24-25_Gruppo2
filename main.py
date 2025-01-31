@@ -49,15 +49,25 @@ if choice == "1":
     test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
     k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
     holdout = Holdout(test_size)
-    accuracy = holdout.split_and_evaluate(k, X, y)
-    print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
+    metriche = holdout.evaluate(X,y,k)
+    print("Metriche Totali:", metriche)
 
 elif choice == "2":
         # Metodo Leave One Out
-        Leave_one_out = leave_one_out(X,y,k=3)
-        #Calculator = metrics_calculator()
-        #metriche = Metrics_calculator.metrics_evaluation(predicted_value, actual_value)
-        metriche = Leave_one_out.split_and_run()
+        k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
+        # Numero di esperimenti richiesto dall'utente:
+        while True:
+                try:
+                        K = int(input(f"Inserisci il numero di esperimenti (intero) tra 1 e {len(X)}: "))
+                        if 1 <= K <= len(X):  # Controlla che K sia valido
+                                break
+                        else:
+                                print(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
+                except ValueError:
+                        print("Errore: inserisci un numero intero valido.")
+        
+        Leave_one_out = leave_one_out(K) #Inizializzazione
+        metriche = Leave_one_out.evaluate(X,y,k)
         print("Metriche Totali:", metriche)
 
 elif choice == "3":
@@ -66,9 +76,10 @@ elif choice == "3":
         k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
         num_splits = int(input("Inserisci il numero di splits da realizzare nel metodo: "))
         random_subsampling = RandomSubsampling(test_size, num_splits) #Inizializzazione
-        accuracy = random_subsampling.run(X, y, k) #Run del metodo, restituisce accuracy del modello
-        print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
+        #accuracy = random_subsampling.run(X, y, k) #Run del metodo, restituisce accuracy del modello
+        #print(f"Accuratezza del modello KNN con k = {k}: {accuracy}")
+        metriche = random_subsampling.evaluate(X,y,k)
+        print("Metriche Totali:", metriche)
 else:
         print("Scelta non valida. Riprova.")
-
 

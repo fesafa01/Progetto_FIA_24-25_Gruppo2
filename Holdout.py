@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from classificatore_KNN import classificatore_KNN
+from metrics_calculator import metrics_calculator
 
 #Implementazione del metodo di validazione Holdout, che divide il dataset in due parti: training e test set
 # in particolare, il test set è una porzione del dataset che non verrà utilizzata per l'addestramento del modello
@@ -21,16 +22,23 @@ class Holdout:
         self.test_size = test_size
 
     
-    def split_and_evaluate(self, k, X, y):
-        '''
-        Divide il dataset in training e test set e valuta il modello KNN
+    def splitter(self, X, y):
+        """
+        Suddivide il dataset in training e test set in base alla proporzione specificata.
 
-        :param k: int, numero di vicini da considerare per il classificatore KNN
-        :param X: pandas DataFrame, features del dataset
-        :param y: pandas Series, target del dataset
+        Il metodo esegue un mescolamento casuale degli indici del dataset, quindi divide i dati in due insiemi:
+        - Training set: usato per addestrare il modello
+        - Test set: usato per valutare le prestazioni del modello
 
-        :return: float, accuratezza del modello KNN
-        '''
+        :param X: pandas DataFrame, rappresenta le feature del dataset.
+        :param y: pandas Series, rappresenta le etichette di classe del dataset.
+
+        :return:
+            - X_train: subset del dataset usato per l'addestramento.
+            - y_train: etichette corrispondenti al training set.
+            - X_test: subset del dataset usato per il test.
+            - y_test: etichette corrispondenti al test set.
+        """
 
         # Controllo se X e y sono vuoti
         if X.empty or y.empty:
@@ -55,7 +63,26 @@ class Holdout:
         X_train, X_test = X.iloc[train_indices], X.iloc[test_indices]
         y_train, y_test = y.iloc[train_indices], y.iloc[test_indices]
 
-         # si crea il KNN con il parametro k specifico per l'iterazione a cui ci troviamo
+        return X_train, y_train, X_test, y_test
+
+    def run(self, X,y,k):
+        """
+        Addestra e testa un classificatore KNN utilizzando la suddivisione del dataset in training e test set.
+        
+        :param X: pandas DataFrame, rappresenta le feature del dataset.
+        :param y: pandas Series, rappresenta le etichette di classe del dataset.
+        :param k: int, numero di vicini da considerare per il classificatore KNN.
+
+        :return:
+            - actual_value: etichette reali del test set.
+            - predicted_value: valori predetti dal modello KNN sul test set.
+        """
+        
+        
+        # chiamiamo il metodo precedente per ottenere X_train, y_train, X_test, y_test
+        X_train, y_train, X_test, y_test = self.splitter(X,y)
+
+        # si crea il KNN con il parametro k specifico per l'iterazione a cui ci troviamo
         knn = classificatore_KNN(k)
             
         # si allena il modello sul training set specifico per l'iterazione a cui ci troviamo
@@ -64,8 +91,31 @@ class Holdout:
         # si fa una predizione su y
         y_pred = knn.predict(X_test) 
 
-        # si calcola l'accuratezza
-        accuracy = np.mean(y_pred == y_test)
+        # si salvano in due variabili il valore corretto e quello predetto dal modello
+        actual_value = y_test
+        predicted_value = y_pred
 
-        return accuracy 
+        return actual_value, predicted_value
+
+    def evaluate(self, X,y,k):
+        """
+        Valuta le prestazioni del classificatore KNN utilizzando le metriche di validazione.
+
+        :param X: pandas DataFrame, rappresenta le feature del dataset.
+        :param y: pandas Series, rappresenta le etichette di classe del dataset.
+        :param k: int, numero di vicini da considerare per il classificatore KNN.
+
+        :return:
+            - metriche: dizionario contenente le metriche di valutazione del modello
+        """
+        
+        # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
+        actual_value, predicted_value = self.run(X,y,k)
+        # creiamo un'istanza della classe che calcola le metriche di valutazione del modello
+        Calculator = metrics_calculator()
+        # calcoliamo la matrice di confusione
+        matrix = Calculator.confusion_matrix(predicted_value, actual_value)
+        # calcoliamo le metriche
+        metriche = Calculator.metrics_evalutation(matrix, predicted_value, actual_value)
     
+        return metriche
