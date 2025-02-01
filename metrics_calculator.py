@@ -136,3 +136,22 @@ class metrics_calculator():
         auc = np.trapz(TPR, FPR)  # Calcoliamo l'integrale numerico della curva ROC
 
         return auc
+
+    def stampa_metriche(self, metriche):
+        """
+        Funzione per stampare le metriche scelte dall'utente.
+        
+        :param metriche: Dizionario contenente le metriche calcolate
+        """
+        # Chiediamo all'utente quali metriche vuole stampare
+        print("\nMetriche disponibili:", ", ".join(metriche.keys()))  # Mostra le metriche disponibili
+        scelta = input("Vuoi stampare tutte le metriche o solo alcune? (digita 'tutte' o inserisci i nomi separati da virgola): ").strip().lower() # Eliminiamo spazi bianchi e convertiamo tutte le lettere in minuscolo
+
+        if scelta == "tutte":
+            print("Metriche Totali:", metriche)
+        else:
+            metriche_scelte = [m.strip() for m in scelta.split(",")] # Selezioniamo le metriche da stampare e rimuoviamo gli spazi in eccesso
+            metriche_filtrate = {m: metriche[m] for m in metriche_scelte if m in metriche} # Filtriamo le metriche scelte e le inseriamo in un dizionario
+            print("Metriche selezionate:", metriche_filtrate)
+
+        

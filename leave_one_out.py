@@ -13,7 +13,7 @@ from metrics_calculator import metrics_calculator
 
 class leave_one_out:
         
-    def __init__(self, K: int):
+    def __init__(self, K: int, X):
         """
         Metodo costruttore del leave_one_out.
         K è il numero di esperimenti che si eseguirà, il suo valore è dato dall'utente
@@ -22,7 +22,11 @@ class leave_one_out:
         if not isinstance(K, int):  # Controllo che K sia un intero
             raise ValueError("K deve essere un numero intero.")
         
-        self.K = K 
+        if not 1 <= K <= len(X):  # Controlla che K sia valido
+            raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
+        
+        self.K = K
+        self.X = X 
     
 
     def splitter (self, X, y):
@@ -38,11 +42,11 @@ class leave_one_out:
          
     '''
         # Controllo se X e y sono vuoti
-        if X.empty or y.empty:
+        if self.X.empty or y.empty:
             raise ValueError("X e y non possono essere vuoti.")
 
         # Controllo che X e y abbiano la stessa lunghezza
-        if len(X) != len(y):
+        if len(self.X) != len(y):
             raise ValueError("X e y devono avere la stessa lunghezza.")
         
         # Se y è un dataframe lo converto in una Series, per il corretto funzionamento del classificatore
@@ -71,7 +75,7 @@ class leave_one_out:
 
     def run(self,X,y,k=3):
             
-        splits = self.splitter(X,y)
+        splits = self.splitter(self.X,y)
         #inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
         all_actual_values=[]
         all_predicted_values=[]
@@ -104,7 +108,7 @@ class leave_one_out:
         """
 
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value = self.run(X,y,k)
+        actual_value, predicted_value = self.run(self.X,y,k)
 
         # Assicuriamoci che actual_value sia una lista di numeri, non una lista di scalari separati
         actual_value = np.array(actual_value).ravel()
