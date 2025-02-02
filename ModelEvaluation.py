@@ -2,11 +2,6 @@ from abc import ABC, abstractmethod
 from Holdout import Holdout 
 from LeaveOneOut import LeaveOneOut
 from RandomSubsampling import RandomSubsampling
-#from appoggio import metrics_calculator
-
-#Implementazione del metodo di validazione Holdout, che divide il dataset in due parti: training e test set
-# in particolare, il test set è una porzione del dataset che non verrà utilizzata per l'addestramento del modello
-# ma solo per la sua valutazione
 
 class ModelSelection(ABC):
     '''
@@ -46,7 +41,7 @@ class ModelEvaluationFactory:
         """
         Factory per restituire l'istanza della strategia di validazione scelta.
 
-        :param method: string, nome della strategia ('holdout', 'leave_one_out', 'random_subsampling')
+        :param choice: int, valore intero che rappresenta il metodo di validazione scelto dall'utente ('holdout', 'leave_one_out', 'random_subsampling')
 
         :return: Istanza della classe di validazione corrispondente, in base alla scelta dell'utente.
         """
