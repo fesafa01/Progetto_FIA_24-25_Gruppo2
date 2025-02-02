@@ -9,10 +9,8 @@ import difflib
 
 class Preprocessing:
 
-    def __init__(self, dataset):
-        self.dataset = dataset
-
-    def filter_and_reorder_columns(self, dataset, threshold=0.7):
+    @staticmethod
+    def filter_and_reorder_columns(dataset, threshold=0.7):
         """
         Mantiene nel dataset solo le colonne specificate, gestendo variazioni nei nomi e riordinandole nella sequenza
         in cui queste sono state fornite nella specifica del progetto.
@@ -55,50 +53,55 @@ class Preprocessing:
 
         return dataset
 
-    def drop_nan(self, threshold):
+    @staticmethod
+    def drop_nan(dataset, threshold):
         '''
         Elimina le righe che contengono almeno (#colonne - threshhold) NaN
         quindi in pratica tengo le righe che hanno almeno threshold valori non NaN
 
+        :param dataset: dataset da pulire
         :param threshold: soglia di valori non NaN
 
         :return: dataset senza righe con almeno threshold valori NaN
         '''
-        self.dataset = self.dataset.dropna(thresh=threshold)
-        return self.dataset
+        dataset = dataset.dropna(thresh=threshold)
+        return dataset
  
-    def drop_nan_target(self, target):
+    @staticmethod   
+    def drop_nan_target(dataset, target):
         '''
         Elimina le righe che non hanno valore nella colonna target
 
+        :param dataset: dataset da pulire
         :param target: nome della colonna target
 
         :return: dataset senza righe con valori NaN nella colonna target
         '''
-        self.dataset = self.dataset.dropna(subset=[target])
-        return self.dataset 
+        dataset = dataset.dropna(subset=[target])
+        return dataset 
 
-    def interpolate(self, method):
+    def interpolate(dataset, method):
         '''
         Interpolazione dei valori NaN rimanenti con una media dei valori adiacenti.
 
+        :param dataset: dataset da pulire
         :param method: metodo di interpolazione (es. 'linear', 'polynomial', ecc.)
 
         :return: dataset con valori NaN interpolati
         '''
         # Converte le colonne a tipi numerici dove possibile, evitando errori
-        self.dataset = self.dataset.infer_objects(copy=False)
+        dataset = dataset.infer_objects(copy=False)
 
         # Seleziona solo colonne numeriche per l'interpolazione
-        numeric_cols = self.dataset.select_dtypes(include=['number'])
+        numeric_cols = dataset.select_dtypes(include=['number'])
 
         # Applica l'interpolazione solo sulle colonne numeriche
-        self.dataset[numeric_cols.columns] = numeric_cols.interpolate(method=method, axis=0)
+        dataset[numeric_cols.columns] = numeric_cols.interpolate(method=method, axis=0)
 
-        return self.dataset
+        return dataset
 
-    
-    def normalize_data(self, X):
+    @staticmethod
+    def normalize_data(X):
         '''
         Normalizzazione Min-Max per le features del modello.
         
@@ -116,19 +119,20 @@ class Preprocessing:
         return X
 
 
-    
-    def split(self, target):
+    @staticmethod
+    def split(dataset, target):
         '''
         Suddivide il dataset in features (X) e target (y), escludendo la prima colonna.
 
+        :param dataset: dataset da suddividere
         :param target: nome della colonna target
         :return: X: features (senza la colonna target), y: target
         '''
         # Mantieni la prima colonna intatta
-        first_column = self.dataset.iloc[:, 0]
+        first_column = dataset.iloc[:, 0]
 
         # Rimuovi la prima colonna dal dataset temporaneo
-        dataset_no_first_col = self.dataset.iloc[:, 1:]
+        dataset_no_first_col = dataset.iloc[:, 1:]
 
         # Separazione di features (X) e target (y)
         X = dataset_no_first_col.drop(columns=[target])
