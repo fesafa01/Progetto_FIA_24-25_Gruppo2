@@ -5,7 +5,7 @@ from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
 
 # Definiamo il nome del file su cui lavorare
-filename = "Progetto_FIA_24-25_Gruppo2/version_1.csv"
+filename = "version_1.csv"
 
 # Usiamo la factory per creare il parser adatto al file
 parser = LogParserFactory().create(filename)
