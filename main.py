@@ -5,6 +5,7 @@ from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
 import os
 
+
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
 
@@ -22,6 +23,29 @@ while True:
         print(f"Errore: Il file '{filename}' non esiste. Riprova.")
 
 print(f"File selezionato: {filename}")
+
+
+# Nel seguente codice commentato, proponiamo una soluzione per l'inserimento del percorso e del file
+# contenente il dataset attraverso una finestra in cui l'utente può selezionare il file.
+# Abbiamo preferito la soluzione con l'inserimento manuale del path ma lasciamo qui la possibilità di modificare questa preferenza.
+"""
+import tkinter as tk
+from tkinter import filedialog
+
+# Apriamo una finestra di selezione file
+root = tk.Tk()
+root.withdraw()  # Nasconde la finestra principale
+filename = filedialog.askopenfilename(title="Seleziona il file CSV")
+
+# Se l'utente non sceglie nulla, usa il file di default
+if not filename:
+    filename = DEFAULT_FILENAME
+
+# Controlliamo se il file esiste
+if not os.path.isfile(filename):
+    print(f"Errore: Il file '{filename}' non esiste. Assicurati che il percorso sia corretto.")
+    exit(1)
+"""
 
 # Usiamo la factory per creare il parser adatto al file
 parser = LogParserFactory().create(filename)
