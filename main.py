@@ -3,9 +3,25 @@ from preprocessing import Preprocessing
 from model_selection import ModelSelection as ms
 from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
+import os
 
-# Definiamo il nome del file su cui lavorare
-filename = "version_1.csv"
+# Definiamo il valore di default per il file
+DEFAULT_FILENAME = "version_1.csv"
+
+while True:
+    # Chiediamo all'utente il file da usare (con possibilità di lasciare il default)
+    user_input = input(f"Inserisci il percorso del file (premi Invio per usare il default: {DEFAULT_FILENAME}): ").strip()
+
+    # Se l'utente non inserisce nulla, usa il file di default
+    filename = user_input if user_input else DEFAULT_FILENAME
+
+    # Controlliamo se il file esiste per evitare errori
+    if os.path.isfile(filename):
+        break  # Esce dal ciclo se il file esiste
+    else:
+        print(f"Errore: Il file '{filename}' non esiste. Riprova.")
+
+print(f"File selezionato: {filename}")
 
 # Usiamo la factory per creare il parser adatto al file
 parser = LogParserFactory().create(filename)

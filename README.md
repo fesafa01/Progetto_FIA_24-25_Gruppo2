@@ -4,6 +4,7 @@
 Spazio di lavoro per lo sviluppo del progetto del corso di Fondamenti di Intelligenza Artificiale dell'Università Campus Bio-Medico di Roma. Il progetto include lo sviluppo di un classificatore k-NN implementato da zero.
 
 ## Funzionalità
+- Inserimento dinamico del percorso e del nome del file, contenente il dataset.
 - Selezione interattiva nella scelta del modello da applicare per dividere il dataset ed eventuali parametri caratteristici di questi modelli.
 - Holdout: metodo che permette la suddivisione di features e labels in train e test usati per l'addestramento e la valutazione del modello.
 - Leave-one-out: metodo che permette di suddivere per tante volte quanto è il numero di campioni, il dataset in training e test set, costituito in ogni iterazione da un solo campione. Il metodo permette di addestrare e testare il classificatore al fine di validarlo.
