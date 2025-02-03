@@ -24,11 +24,6 @@ class RandomSubsampling:
         # Controllo della validità di test_size
         if not 0 < test_size < 1:
             raise ValueError("test_size deve essere compreso tra 0 e 1.")
-        
-        # Controllo della validità di num_splits, per superare rispwettivo test
-        if not isinstance(num_splits, int) or num_splits <= 0:
-            raise ValueError("num_splits deve essere un intero positivo maggiore di zero.")
-        
         self.test_size = test_size
         self.num_splits = num_splits
 
