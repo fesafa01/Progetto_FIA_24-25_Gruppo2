@@ -34,7 +34,41 @@ class ModelSelection(ABC):
         """Metodo astratto per calcolare le metriche di valutazione."""
         pass
 
+class ModelEvaluationFactory:
+    """
+    Classe Factory per la creazione delle istanze delle diverse strategie di validazione.
 
+    Questa classe fornisce un metodo statico che permette di istanziare la strategia 
+    di validazione scelta dall'utente. Supporta tecniche di validazione come Holdout, 
+    Leave-One-Out e Random Subsampling.
+
+    Utilizza parametri opzionali (**kwargs) per rendere flessibile il passaggio 
+    delle informazioni necessarie a ciascuna strategia.
+    """
+        
+    @staticmethod
+    def get_validation_strategy(choice, **kwargs):
+        '''
+        Restituisce un'istanza della strategia di validazione selezionata.
+
+        :param choice: str, scelta dell'utente per la strategia di validazione 
+                        ("1" per Holdout, "2" per Leave-One-Out, "3" per Random Subsampling).
+        :param kwargs: dict, contiene i parametri necessari per la strategia scelta.
+
+        :return: Istanza della classe corrispondente alla scelta dell'utente.
+
+        :raises ValueError: Se la scelta non è valida.
+        '''
+        if choice == "1":
+            return Holdout(kwargs.get("test_size"))
+        elif choice == "2":
+            return LeaveOneOut(kwargs.get("K"))
+        elif choice == "3":
+            return RandomSubsampling(kwargs.get("test_size"), kwargs.get("num_splits"))
+        else:
+            raise ValueError("Metodo di validazione non riconosciuto.")
+
+'''
 class ModelEvaluationFactory:
     @staticmethod
     def get_validation_strategy(choice, X):
@@ -58,3 +92,4 @@ class ModelEvaluationFactory:
             return RandomSubsampling(test_size, num_splits)
         else:
             raise ValueError(f"Metodo di validazione non riconosciuto.")
+'''

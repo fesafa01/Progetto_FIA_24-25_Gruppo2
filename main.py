@@ -37,46 +37,26 @@ print(y)
 
 #Scelgo il metodo di divisione del dataset in train e test set
 choice = ms.model_selection()
-
-ModelEvaluation = ModelEvaluationFactory().get_validation_strategy(choice, X)
 k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
-metriche = ModelEvaluation.evaluate(X, y, k)
-metriche_da_stampare = metrics_calculator() # Inizializzazione
-metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
 
-'''
 if choice == "1":
-    # Metodo Holdout
-    test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
-    k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
-    holdout = Holdout(test_size)
-    metriche = holdout.evaluate(X,y,k)  #Calcoliamo tutte le metriche
-    metriche_da_stampare = metrics_calculator() # Inizializzazione
-    metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
-    
+    test_size = float(input("Inserisci il valore percentuale per il test set: "))
+    strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size)
 
 elif choice == "2":
-        # Metodo Leave One Out
-        k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
-        # Numero di esperimenti richiesto dall'utente:
         K = int(input(f"Inserisci il numero di esperimenti (intero) tra 1 e {len(X)}: "))
-        Leave_one_out = leave_one_out(K, X) #Inizializzazione
-        metriche = Leave_one_out.evaluate(X,y,k)
-        metriche_da_stampare = metrics_calculator() # Inizializzazione
-        metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
-        
+        strategy = ModelEvaluationFactory.get_validation_strategy(choice, K=K)
 
 elif choice == "3":
-        # Metodo Random Subsampling
-        test_size = float(input("Inserisci il valore percentuale che rappresenta la dimensione del test set rispetto all'intero set di dati: "))
-        k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
-        num_splits = int(input("Inserisci il numero di splits da realizzare nel metodo: "))
-        random_subsampling = RandomSubsampling(test_size, num_splits) #Inizializzazione
-        metriche = random_subsampling.evaluate(X,y,k)
-        
-        metriche_da_stampare = metrics_calculator() # Inizializzazione
-        metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
+    test_size = float(input("Inserisci il valore percentuale per il test set: "))
+    num_splits = int(input("Inserisci il numero di splits: "))
+    strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size, num_splits=num_splits)
 else:
-        print("Scelta non valida. Riprova.")
+    raise ValueError("Scelta non valida.")
 
-'''
+# Ora possiamo usare strategy
+metriche = strategy.evaluate(X, y, k) # Calcolo delle metriche
+metriche_da_stampare = metrics_calculator() # Inizializzazione
+metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
+print("Metriche richieste:", metriche_da_stampare)
+

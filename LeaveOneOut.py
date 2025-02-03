@@ -13,7 +13,7 @@ from metrics_calculator import metrics_calculator
 
 class LeaveOneOut:
         
-    def __init__(self, K: int, X):
+    def __init__(self, K: int):
         """
         Metodo costruttore del LeaveOneOut.
         K è il numero di esperimenti che si eseguirà, il suo valore è dato dall'utente
@@ -22,11 +22,8 @@ class LeaveOneOut:
         if not isinstance(K, int):  # Controllo che K sia un intero
             raise ValueError("K deve essere un numero intero.")
         
-        if not 1 <= K <= len(X):  # Controlla che K sia valido
-            raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
-        
         self.K = K
-        self.X = X 
+        #self.X = X 
     
 
     def splitter (self, X, y):
@@ -44,12 +41,16 @@ class LeaveOneOut:
         return: splits, ossia una lista di tuple contenenti X_train, y_train, X_test, y_test
          
     '''
+        # Controllo preliminare su K prima di dividere il dataset
+        if not 1 <= self.K <= len(X):  # Controlla che K sia valido
+            raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
+        
         # Controllo se X e y sono vuoti
-        if self.X.empty or y.empty:
+        if X.empty or y.empty:
             raise ValueError("X e y non possono essere vuoti.")
 
         # Controllo che X e y abbiano la stessa lunghezza
-        if len(self.X) != len(y):
+        if len(X) != len(y):
             raise ValueError("X e y devono avere la stessa lunghezza.")
         
         # Se y è un dataframe lo converto in una Series, per il corretto funzionamento del classificatore
@@ -92,8 +93,11 @@ class LeaveOneOut:
 
         return: all_actual_values, all_predicted_values        
         '''
-            
-        splits = self.splitter(self.X,y)
+        # Controllo su K prima di chiamare splitter
+        if not 1 <= self.K <= len(X):
+            raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
+        
+        splits = self.splitter(X,y)
         #inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
         all_actual_values=[]
         all_predicted_values=[]
@@ -114,7 +118,7 @@ class LeaveOneOut:
         
         return all_actual_values, all_predicted_values
             
-    def evaluate(self, X,y,k=3):       
+    def evaluate(self,X,y,k=3):       
         """
             Metodo per valutare le prestazioni del modello KNN utilizzando il metodo Random Subsampling.
 
@@ -124,9 +128,12 @@ class LeaveOneOut:
 
             :return: dict, dizionario contenente le metriche di valutazione del modello.
         """
-
+        # Controllo su K prima di procedere con la valutazione
+        if not 1 <= self.K <= len(X):
+            raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
+        
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value = self.run(self.X,y,k)
+        actual_value, predicted_value = self.run(X,y,k)
 
         # Assicuriamoci che actual_value sia una lista di numeri, non una lista di scalari separati
         actual_value = np.array(actual_value).ravel()
