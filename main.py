@@ -71,9 +71,11 @@ X, y = Preprocessing.split(dataset, "Class")
 # Normalizzo le features
 X = Preprocessing.normalize_data(X)
 
+'''
 print(dataset)
 print(X)
 print(y)
+'''
 
 #Scelgo il metodo di divisione del dataset in train e test set
 choice = ms.model_selection()
@@ -98,5 +100,5 @@ else:
 metriche = strategy.evaluate(X, y, k) # Calcolo delle metriche
 metriche_da_stampare = metrics_calculator() # Inizializzazione
 metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
-print("Metriche richieste:", metriche_da_stampare)
+
 
