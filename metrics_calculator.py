@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib as plt
 '''
 Classe che calcola le metriche di valutazione di un modello di classificazione.
 
@@ -93,6 +94,8 @@ class metrics_calculator():
         auc_roc = None
         if predicted_value is not None and actual_value is not None:
             auc_roc = float(self.compute_auc(actual_value, predicted_value))  # Passiamo liste
+        #if predicted_value is not None and actual_value is not None:
+        #    auc_roc_2 = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
       
         metrics = {
             "accuracy": AR,
@@ -100,45 +103,69 @@ class metrics_calculator():
             "sensitivity": TPR,
             "specificity": TNR,
             "geometric mean": g_mean,
-            "area under the curve": auc_roc
+            "area under the curve": auc_roc,
+            #"area under the curve 2": auc_roc_2
         }
 
         return metrics
-
+    
     def compute_auc(self, actual_value, predicted_value):
         """
-        Calcola manualmente l'Area Under the Curve (AUC) della curva ROC.
+        Calcola l'Area Under the Curve (AUC) della curva ROC, assumendo '2' come classe positiva.
 
-        Viene usato il metodo dell'integrale numerico.
-        
-        :param actual_value: np.ndarray o lista, valori reali.
-        :param predicted_value: np.ndarray o lista, valori predetti.
+        :param actual_value: np.ndarray o lista, contiene i valori reali delle classi (2 o 4).
+        :param predicted_value: np.ndarray o lista, contiene valori predetti (2 o 4) 
         :return: float, valore AUC-ROC.
         """
-        positive_label = 2 
-        
-        if len(set(actual_value)) < 2:  # Controlliamo se c'è almeno una classe positiva e una negativa
+
+        positive_label = 2  # Indichiamo la classe positiva (tumore benigno = 2).
+
+        # 1. Controlli preliminari
+        # Se c'è una sola classe reale (tutti 2 o tutti 4), l'AUC non ha senso.
+        if len(set(actual_value)) < 2:
             print("Errore: Actual values contiene solo una classe, AUC non può essere calcolata!")
             return 0
 
-        if len(set(predicted_value)) < 2:  # Controlliamo se il modello sta facendo sempre la stessa previsione
+        # Se il modello produce sempre la stessa previsione, non abbiamo un ranking utile per calcolare la curva ROC.
+        if len(set(predicted_value)) < 2:
             print("Errore: Predicted values contiene solo un valore, AUC non può essere calcolata!")
             return 0
 
-        # Calcolo AUC manuale senza sklearn
+        # 2. Costruzione della curva ROC
+        # Per calcolare la curva ROC, ci serve un "ranking" dei campioni, in base ai valori di previsione (predicted_value).
+        # Otteniamo gli indici che riordinano predicted_value dal più piccolo al più grande.
         sorted_indices = np.argsort(predicted_value)
-        y_true_sorted = np.array(actual_value)[sorted_indices]
+        # Quindi: sorted_indices[i] = indice del campione che ha l'i-esimo valore più piccolo in predicted_value.
 
-        # Calcoliamo le True Positive Rate e False Positive Rate
-        #TPR = np.cumsum(y_true_sorted == max(y_true_sorted)) / np.sum(y_true_sorted == max(y_true_sorted))
-        #FPR = np.cumsum(y_true_sorted != max(y_true_sorted)) / np.sum(y_true_sorted != max(y_true_sorted))
-        # Calcolo TPR/FPR rispetto a '2' come classe positiva
-        TPR = np.cumsum(y_true_sorted == positive_label) / np.sum(y_true_sorted == positive_label)
-        FPR = np.cumsum(y_true_sorted != positive_label) / np.sum(y_true_sorted != positive_label)
+        # Riordiniamo i valori reali (actual_value) secondo questo ordine:
+        y_true_sorted = np.array(actual_value)[sorted_indices]
+        # Quindi: l'elemento y_true_sorted[0] corrisponde al campione con minore predicted_value, 
+        # y_true_sorted[1] a quello con il secondo valore, ecc.
+        # In questo modo, scorrendo y_true_sorted, andiamo a costruire i punti della curva ROC secondo soglie crescenti di predicted_value.
+
+        # Calcoliamo la TPR e FPR cumulati, "scorrendo" dal campione col punteggio più basso a quello col punteggio più alto.
+        # TPR[i] = frazione di campioni positivi (classe 2) trovati 
+        #          tra i primi i+1 campioni (ordinati per predicted_value).
+        # FPR[i] = frazione di campioni negativi (classe != 2) trovati 
+        #          tra i primi i+1 campioni (ordinati per predicted_value).
+
+        TPR = np.cumsum(y_true_sorted == positive_label) / np.sum(y_true_sorted == positive_label) #True Positive Rate
+        FPR = np.cumsum(y_true_sorted != positive_label) / np.sum(y_true_sorted != positive_label) #False Positive Rate
+
+        # Quindi: cumsum(y_true_sorted == 2) conta quanti campioni "veramente positivi" (classe 2) compaiono cumulativamente 
+        # mentre avanzano i campioni con predicted_value crescente. 
+        # Dividendo per il numero totale di positivi, otteniamo la TPR in ciascun punto.
+        # Stessa logica è seguita per il calcolo sui negativi (FPR).
+
         
-        auc = np.trapz(TPR, FPR)  # Calcoliamo l'integrale numerico della curva ROC
+        # 3. Calcolo dell'Area Under the Curve
+        # Una volta ottenuti i punti (FPR[i], TPR[i]) che definiscono la curva ROC, calcoliamo l'area con un integrale numerico 
+        # (metodo dei trapezi).
+        auc = np.trapz(TPR, FPR)  # np.trapz(y, x) = integrale di y rispetto a x
+        # AUC = area sotto la curva TPR(FPR).
 
         return auc
+
 
     def stampa_metriche(self, metriche):
         """
@@ -157,4 +184,3 @@ class metrics_calculator():
             metriche_filtrate = {m: metriche[m] for m in metriche_scelte if m in metriche} # Filtriamo le metriche scelte e le inseriamo in un dizionario
             print("Metriche selezionate:", metriche_filtrate)
 
-        

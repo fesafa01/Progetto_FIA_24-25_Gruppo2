@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 from classificatore_KNN import classificatore_KNN
 from metrics_calculator import metrics_calculator
 #from appoggio import metrics_calculator
@@ -59,13 +60,24 @@ class LeaveOneOut:
         
         # creiamo un array che conterrà tutti gli X_train, y_train, X_test, y_test
         splits = [] 
-        
+        # creiamo una variabile che contenga il numero totale di campioni
+        n = len(X)  
+        # Creaiamo una array di tutti gli indici
+        indices = list(range(n))
+        # Mescola gli indici in modo casuale
+        random.shuffle(indices)
+
+        splits = []
         for i in range(self.K):
-            
+            # selezioniamo l'indice di un campione di test, tra quelli del vettore randomizzato 
+            test_index = indices[i]
+            # creiamo un vettore che contenga tutti gli altri indici
+            train_indices = indices[:i] + indices[i+1:]
+            '''
             # individuiamo gli INDICI di train/test
             test_index = i  # singolo campione selezionato
             train_indices = [j for j in range(self.K) if j != i]
-            
+            '''
             # dividiamo i DATI in train/test
             X_train = X.iloc[train_indices]  
             y_train = y.iloc[train_indices]

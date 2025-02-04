@@ -5,7 +5,6 @@ from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
 import os
 
-
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
 
@@ -84,7 +83,7 @@ choice = ms.model_selection()
 k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
 
 if choice == "1":
-    test_size = float(input("Inserisci il valore percentuale per il test set: "))
+    test_size = input("Inserisci il valore percentuale per il test set: ")
     strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size)
 
 elif choice == "2":
@@ -92,7 +91,7 @@ elif choice == "2":
         strategy = ModelEvaluationFactory.get_validation_strategy(choice, K=K)
 
 elif choice == "3":
-    test_size = float(input("Inserisci il valore percentuale per il test set: "))
+    test_size = input("Inserisci il valore percentuale per il test set: ")
     num_splits = int(input("Inserisci il numero di splits: "))
     strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size, num_splits=num_splits)
 else:

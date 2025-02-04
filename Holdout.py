@@ -7,20 +7,47 @@ from metrics_calculator import metrics_calculator
 # ma solo per la sua valutazione
 
 class Holdout:
-        
+    '''  
     def __init__(self, test_size=0.3):
-        '''
-        Costruttore della classe Holdout
-        :param test_size: float, valore percentuale che rappresenta la 
-        dimensione del test set rispetto all'intero set di dati, di default è 0.3
-        in output non ritorna nulla
-
-        '''
         if not 0 < test_size < 1:
             raise ValueError("test_size deve essere compreso tra 0 e 1.")
         self.test_size = test_size
+    '''
+    def __init__(self, test_size=0.3):
+        """
+        Costruttore della classe Holdout.
+        :param test_size: Può essere:
+            - Un valore in [0,1), interpretato come frazione (es. 0.3 = 30%)
+            - Un valore in (1,100], interpretato come percentuale (es. 30 = 0.3)
+            - Una stringa che termina con '%' (es. "30%")
+        """
+        # Se test_size è stringa, rimuoviamo il % e convertiamo a float
+        if isinstance(test_size, str):
+            # Rimuove eventuali spazi
+            test_size = test_size.strip()
+            
+            # Se termina con "%"
+            if test_size.endswith('%'):
+                # rimuove il simbolo '%'
+                test_size = test_size[:-1]
+                # convertiamo a float
+                test_size = float(test_size)
+                # trasformiamolo in un valore percentuale
+                test_size /= 100.0
+            else:
+                # Se l'utente ha scritto "0.3" come una stringa lo convertiamo in float
+                test_size = float(test_size)
 
-    
+        # Se invece test_size è un numero, lo dividiamo per 100 per ottenere il valore percentuale
+        if test_size > 1:
+            test_size /= 100.0
+
+        # infine verifichiamo che, come vuole il metodo successivo della classe, test_size sia tra 0 e 1
+        if not 0 < test_size < 1:
+            raise ValueError("test_size deve essere compreso tra 0 e 1, o tra 1 e 100 come percentuale, o stringa con '%'.")
+        
+        self.test_size = test_size
+        
     def splitter(self, X, y):
         """
         Suddivide il dataset in training e test set in base alla proporzione specificata.
