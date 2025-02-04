@@ -115,7 +115,8 @@ class metrics_calculator():
         :param predicted_value: np.ndarray o lista, valori predetti.
         :return: float, valore AUC-ROC.
         """
-
+        positive_label = 2 
+        
         if len(set(actual_value)) < 2:  # Controlliamo se c'è almeno una classe positiva e una negativa
             print("Errore: Actual values contiene solo una classe, AUC non può essere calcolata!")
             return 0
@@ -127,12 +128,14 @@ class metrics_calculator():
         # Calcolo AUC manuale senza sklearn
         sorted_indices = np.argsort(predicted_value)
         y_true_sorted = np.array(actual_value)[sorted_indices]
-        y_score_sorted = np.array(predicted_value)[sorted_indices]
 
         # Calcoliamo le True Positive Rate e False Positive Rate
-        TPR = np.cumsum(y_true_sorted == max(y_true_sorted)) / np.sum(y_true_sorted == max(y_true_sorted))
-        FPR = np.cumsum(y_true_sorted != max(y_true_sorted)) / np.sum(y_true_sorted != max(y_true_sorted))
-
+        #TPR = np.cumsum(y_true_sorted == max(y_true_sorted)) / np.sum(y_true_sorted == max(y_true_sorted))
+        #FPR = np.cumsum(y_true_sorted != max(y_true_sorted)) / np.sum(y_true_sorted != max(y_true_sorted))
+        # Calcolo TPR/FPR rispetto a '2' come classe positiva
+        TPR = np.cumsum(y_true_sorted == positive_label) / np.sum(y_true_sorted == positive_label)
+        FPR = np.cumsum(y_true_sorted != positive_label) / np.sum(y_true_sorted != positive_label)
+        
         auc = np.trapz(TPR, FPR)  # Calcoliamo l'integrale numerico della curva ROC
 
         return auc
