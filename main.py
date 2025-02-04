@@ -62,14 +62,16 @@ dataset = Preprocessing.drop_nan(dataset, 8)
 #Elimino le righe che non hanno valore nella class label
 dataset = Preprocessing.drop_nan_target(dataset, "Class")
 
-#Riempio i valori NaN rimanenti con una media dei valori adiacenti
-dataset = Preprocessing.interpolate(dataset, "linear")
+#Seleziono come sostituire i valori NaN nel dataset scegliendo tra media, mediana, moda e rimuovi
+indicatore = str(input("Inserisci il metodo di sostituzione dei valori NaN (media, mediana, moda, rimuovi): "))
+dataset = Preprocessing.nan_handler(dataset, indicatore)
 
 #Suddivido in features (X) e target (y)
 X, y = Preprocessing.split(dataset, "Class")
 
-# Normalizzo le features
-X = Preprocessing.normalize_data(X)
+# Seleziono il metodo di feature scaling delle features del dataset
+method = int(input("Scegli il metodo di feature scaling: \n1 - Standardizzazione \n2 - Normalizzazione\n"))
+X = Preprocessing.feature_scaling(X, method)
 
 '''
 print(dataset)

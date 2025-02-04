@@ -7,7 +7,7 @@ class ModelSelection:
         print("Scegli il metodo di divisione del dataset:")
         print("1 - Holdout")
         print("2 - Leave One Out")
-        print("3 - Metodo 3")
+        print("3 - Random Subsampling")
         choice = input("Inserisci il numero della tua scelta: ")
         print(f"Utente ha scelto: {choice}")
         return choice

@@ -102,41 +102,55 @@ class Preprocessing:
         return dataset 
 
     @staticmethod
-    def interpolate(dataset, method):
+    def nan_handler(dataset, method):
         '''
-        Interpolazione dei valori NaN rimanenti con una media dei valori adiacenti.
+        Sostituzione dei valori NaN con media, mediana, moda della rispettiva colonna o rimozione delle righe con valori NaN.
 
         :param dataset: dataset da pulire
-        :param method: metodo di interpolazione (es. 'linear', 'polynomial', ecc.)
-
-        :return: dataset con valori NaN interpolati
+        :param method: metodo di sostituzione ('media', 'mediana', 'moda', 'rimuovi')
+        
+        :return: dataset con valori NaN sostituiti o eliminati
         '''
-        # Converte le colonne a tipi numerici dove possibile, evitando errori
-        dataset = dataset.infer_objects(copy=False)
+        # Converte tutte le colonne in numerico dove possibile, impostando NaN per i valori non convertibili
+        dataset = dataset.apply(pd.to_numeric, errors='coerce')
 
-        # Seleziona solo colonne numeriche per l'interpolazione
-        numeric_cols = dataset.select_dtypes(include=['number'])
-
-        # Applica l'interpolazione solo sulle colonne numeriche
-        dataset[numeric_cols.columns] = numeric_cols.interpolate(method=method, axis=0)
-
+        if method == 'media':
+            dataset = dataset.fillna(dataset.mean())
+        elif method == 'mediana':
+            dataset = dataset.fillna(dataset.median())
+        elif method == 'moda':
+            dataset = dataset.apply(lambda col: col.fillna(col.mode()[0]) if not col.mode().empty else col)
+        elif method == 'rimuovi':
+            dataset = dataset.dropna()
+        else:
+            raise ValueError("Metodo non valido! Usa 'mean', 'median', 'mode' o 'remove'.")
+        
         return dataset
 
     @staticmethod
-    def normalize_data(X):
+    def feature_scaling(X, method=1):
         '''
-        Normalizzazione Min-Max per le features del modello.
+        Funzione per scalare le features del modello.
         
-        La formula è: (X - X.min()) / (X.max() - X.min())
-
+        Opzioni disponibili:
+        1 - Normalizzazione Min-Max: (X - X.min()) / (X.max() - X.min())
+        2 - Standardizzazione Z-score: (X - X.mean()) / X.std()
+        
         :param X: features del modello
-        :return X: features del modello normalizzate
+        :param method: 1 per Normalizzazione, 2 per Standardizzazione. Se non specificato applica Normalizzazione.
+        :return X: features scalate
         '''
         # Converte tutto a numerico e fornisce NaN per valori non convertibili
         X = X.apply(pd.to_numeric, errors='coerce')
-
-        # Applica la normalizzazione Min-Max solo se i valori sono numerici
-        X = (X - X.min()) / (X.max() - X.min())
+        
+        if method == 1:
+            # Normalizzazione Min-Max
+            X = (X - X.min()) / (X.max() - X.min())
+        elif method == 2:
+            # Standardizzazione
+            X = (X - X.mean()) / X.std()
+        else:
+            raise ValueError("Metodo non valido! Usa 1 per Normalizzazione o 2 per Standardizzazione.")
 
         return X
 
