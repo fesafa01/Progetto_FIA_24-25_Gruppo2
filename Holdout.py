@@ -137,11 +137,5 @@ class Holdout:
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
         actual_value, predicted_value = self.run(X,y,k)
-        # creiamo un'istanza della classe che calcola le metriche di valutazione del modello
-        Calculator = metrics_calculator()
-        # calcoliamo la matrice di confusione
-        matrix = Calculator.confusion_matrix(predicted_value, actual_value)
-        # calcoliamo le metriche
-        metriche = Calculator.metrics_evalutation(matrix, predicted_value, actual_value)
     
-        return metriche
+        return actual_value, predicted_value

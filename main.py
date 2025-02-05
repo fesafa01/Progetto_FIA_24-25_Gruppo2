@@ -4,6 +4,7 @@ from model_selection import ModelSelection as ms
 from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
 import os
+from metrics_visualizer import metrics_visualizer
 
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
@@ -32,6 +33,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 # Apriamo una finestra di selezione file
+
 root = tk.Tk()
 root.withdraw()  # Nasconde la finestra principale
 filename = filedialog.askopenfilename(title="Seleziona il file CSV")
@@ -50,7 +52,9 @@ if not os.path.isfile(filename):
 parser = LogParserFactory().create(filename)
 
 # Carichiamo il dataset
-dataset = parser.parse(filename)        
+dataset = parser.parse(filename)       
+
+print(f"{dataset=}")
 
 #Puliamo e riordiniamo il dataset secondo le specifiche della traccia
 dataset = Preprocessing.filter_and_reorder_columns(dataset, 0.4)
@@ -65,12 +69,16 @@ dataset = Preprocessing.drop_nan_target(dataset, "Class")
 indicatore = str(input("Inserisci il metodo di sostituzione dei valori NaN (media, mediana, moda, rimuovi): "))
 dataset = Preprocessing.nan_handler(dataset, indicatore)
 
+print(f"Dataset con valori NaN sostituiti: {dataset=}")
+
 #Suddivido in features (X) e target (y)
 X, y = Preprocessing.split(dataset, "Class")
 
 # Seleziono il metodo di feature scaling delle features del dataset
 method = int(input("Scegli il metodo di feature scaling: \n1 - Standardizzazione \n2 - Normalizzazione\n"))
 X = Preprocessing.feature_scaling(X, method)
+
+print(f"Features con applicazione del metodo di feature scaling selezionato: {X=}")
 
 '''
 print(dataset)
@@ -98,8 +106,16 @@ else:
     raise ValueError("Scelta non valida.")
 
 # Ora possiamo usare strategy
-metriche = strategy.evaluate(X, y, k) # Calcolo delle metriche
-metriche_da_stampare = metrics_calculator() # Inizializzazione
-metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
+actual_value, predicted_value = strategy.evaluate(X, y, k) # Calcolo delle metriche
+
+#Inizializziamo oggetto per visualizzare metriche e salvarle
+
+MetricsVisualizer = metrics_visualizer(actual_value, predicted_value)
+
+# Visualizziamo le metrche del modello
+MetricsVisualizer.visualizza_metriche()
+
+#Salviamo le metriche in relativo file excel (Dare in input il nome del file, default:"model_performance.xlsx")
+MetricsVisualizer.save()
 
 

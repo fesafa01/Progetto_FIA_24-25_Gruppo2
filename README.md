@@ -11,6 +11,9 @@ Spazio di lavoro per lo sviluppo del progetto del corso di Fondamenti di Intelli
 - Random Subsampling: metodo che suddivide il dataset in training e test set più volte in modo casuale per ottenere una valutazione più stabile delle prestazioni del modello.
 - Classificatore k-NN: Un modello che predice le etichette dei dati basandosi sui k nearest neighbours, utilizzando la distanza euclidea (modificabile se necessario).
 - Calcolo delle seguenti metriche per ogni metodo di validazione del modello: accuracy rate (AR), error rate (ER), sensitivity (TPR), specificity (TNR), geometric mean, area under the curve. Vengono stampate solo le metriche richieste dall'utente.
+- Plot dei grafici relativi alle metriche calcolate (bar plot e line chart).
+- Plot della matrice di confusione calcolata.
+- Salvataggio delle metriche in un apposito file .xlsx (con possibilità di nominare il file generato).
 
 ## Utilizzo
 Per utilizzare il classificatore k-NN, seguire questi passaggi:
@@ -18,11 +21,12 @@ Per utilizzare il classificatore k-NN, seguire questi passaggi:
 2. Assicurarsi di avere Python installato con le librerie `numpy` e `random`.
 3. Eseguire il file `main.py` per addestrare e testare il modello k-NN.
 
-## Dipendenze
+## Dipendenze (file requirements.txt)
 - Python (3.x)
 - Numpy
 - Pandas
 - Random
+- Matplotlib
 
 ## Autori
 - Gruppo 2 del corso di Fondamenti di Intelligenza Artificiale
