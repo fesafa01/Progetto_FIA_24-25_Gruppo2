@@ -117,11 +117,14 @@ class Holdout:
         # si fa una predizione su y
         y_pred = knn.predict(X_test) 
 
+        # si calcola lo score
+        predicted_score = knn.predict_proba(X_test)
+
         # si salvano in due variabili il valore corretto e quello predetto dal modello
         actual_value = y_test
         predicted_value = y_pred
 
-        return actual_value, predicted_value
+        return actual_value, predicted_value, predicted_score
 
     def evaluate(self, X,y,k=3):
         """
@@ -136,6 +139,6 @@ class Holdout:
         """
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,k)
     
-        return actual_value, predicted_value
+        return actual_value, predicted_value, predicted_score

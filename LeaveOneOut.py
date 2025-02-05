@@ -113,6 +113,7 @@ class LeaveOneOut:
         #inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
         all_actual_values=[]
         all_predicted_values=[]
+        all_predicted_scores=[]
             
         knn = classificatore_KNN(k=k) # si inizializza il KNN
         for X_train, y_train, X_test, y_test in splits:
@@ -121,14 +122,19 @@ class LeaveOneOut:
             # si fa una predizione su y
             y_pred = knn.predict(X_test) # si nota che poiché X_test ha 1 campione, y_pred avrà 1 elemento
             # si salvano in due variabili il valore corretto e quello predetto dal modello
+            
+            y_score = knn.predict_proba(X_test)
+            
             actual_value = y_test
             predicted_value = y_pred
+            predicted_score = y_score
     
             # Accumuliamo i valori reali e predetti nei due vettori creati
             all_actual_values.append(actual_value)
             all_predicted_values.append(predicted_value)
+            all_predicted_scores.append(predicted_score)
         
-        return all_actual_values, all_predicted_values
+        return all_actual_values, all_predicted_values, all_predicted_scores
             
     def evaluate(self,X,y,k=3):       
         """
@@ -145,7 +151,7 @@ class LeaveOneOut:
             raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,k)
 
         # Assicuriamoci che actual_value sia una lista di numeri, non una lista di scalari separati
         actual_value = np.array(actual_value).ravel()
@@ -153,7 +159,10 @@ class LeaveOneOut:
         # Convertiamo predicted_value in un array numpy pulito
         predicted_value = np.array([float(y.iloc[0]) if isinstance(y, pd.Series) else float(y) for y in predicted_value])
         
-        return actual_value, predicted_value
-
+        predicted_score = np.array(predicted_score).ravel()
         
+        return actual_value, predicted_value, predicted_score
+
+    
+
             

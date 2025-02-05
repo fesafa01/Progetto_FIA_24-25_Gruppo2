@@ -6,7 +6,7 @@ import numpy as np
 
 class metrics_visualizer():
 
-    def __init__(self, actual_value, predicted_value):
+    def __init__(self, actual_value, predicted_value, predicted_score):
         """
         Inizializzare l'oggetto
 
@@ -15,6 +15,7 @@ class metrics_visualizer():
         """
         self.actual_value=actual_value
         self.predicted_value=predicted_value
+        self.predicted_score = predicted_score
         self.calculator = metrics_calculator()
         self.matrix = {}
         self.metrics = {}
@@ -26,7 +27,7 @@ class metrics_visualizer():
         # calcoliamo la matrice di confusione
         self.matrix = self.calculator.confusion_matrix(self.predicted_value, self.actual_value)
         # calcoliamo le metriche
-        self.metrics = self.calculator.metrics_evalutation(self.matrix, self.predicted_value, self.actual_value)
+        self.metrics = self.calculator.metrics_evalutation(self.matrix, self.predicted_value, self.actual_value, self.predicted_score)
 
         self.metrics= self.calculator.scegli_e_stampa_metriche(self.metrics)
 
@@ -48,12 +49,11 @@ class metrics_visualizer():
 
         # Salva le metriche in un file Excel
         metrics_df = pd.DataFrame(self.metrics.items(), columns=["Metrica", "Valore"]) #Convertiamo in DataFrame per poi salvare su Excel
-        metrics_df.to_excel(nome_file, index=False, engine="openpyxl")
+        metrics_df.to_excel(nome_file, index=False)
         print(f"Ho salvato le metriche in {nome_file}!")
 
         """nome_file: nome del file dove salvare dati,
-        Non include l'indice del DataFrame nel file Excel
-        Engine utilizzato: openpyxl
+        Non include l'indice del DataFrame nel file Excel,
         """
 
     def plot_metrics(self) -> None:

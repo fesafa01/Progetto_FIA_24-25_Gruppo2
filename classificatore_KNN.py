@@ -110,8 +110,43 @@ class classificatore_KNN:
 
         # Restituisce una Series con le predizioni
         return pd.Series(predizioni, index=X_test.index)
+    
+    
+    ########################
+    # NUOVO METODO PER SCORE
+    ########################
 
-
+    def predict_proba(self, X_test):
+        """
+        Calcola le probabilità che ogni istanza di X_test appartenga alla classe positiva.
+        
+        Args:
+            X_test (pd.DataFrame): Il set di dati di test.
+        
+        Returns:
+            pd.Series: Serie di probabilità per la classe positiva.
+        """
+        positive_class = 2 # Definizione della classe considerata positiva
+        
+        # Calcolo delle distanze tra ogni punto in X_test e tutti i punti in X_train
+        distanze = self.fun_distanza(X_test.values, self.X_train.values)
+        
+        # Trova gli indici dei k vicini più prossimi ordinando per distanza crescente
+        k_indici = np.argsort(distanze, axis=1)[:, :self.k]
+        
+        # Recupera le etichette dei k vicini più prossimi
+        k_nearest_labels = [self.y_train.iloc[ind] for ind in k_indici]
+        
+        probabilities = []
+        for labels in k_nearest_labels:
+            # Calcola la probabilità come la media delle etichette uguali alla classe positiva
+            prob = np.mean(labels == positive_class)
+            probabilities.append(prob)
+        
+        # Converte le probabilità in una Serie pandas con gli stessi indici di X_test
+        predicted_scores = pd.Series(probabilities, index=X_test.index)
+        
+        return predicted_scores
 
     def majority_vote(self, labels):
         """
@@ -137,3 +172,5 @@ class classificatore_KNN:
         
         # Selezionare casualmente in caso di pareggio
         return random.choice(label_vincitrici) if len(label_vincitrici) > 1 else label_vincitrici[0]
+
+    

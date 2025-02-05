@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib as plt
+from classificatore_KNN import classificatore_KNN
 '''
 Classe che calcola le metriche di valutazione di un modello di classificazione.
 
@@ -62,7 +63,7 @@ class metrics_calculator():
                 "FN": FN }
 
 
-    def metrics_evalutation(self, confusion_matrix, predicted_value = None, actual_value = None): # i due parametri in ingresso actual e predicted value sono opzionali
+    def metrics_evalutation(self, confusion_matrix, predicted_value = None, actual_value = None, predicted_score=None): # i due parametri in ingresso actual e predicted value sono opzionali
         """
         Calcola diverse metriche di valutazione del modello utilizzando la matrice di confusione.
 
@@ -93,7 +94,7 @@ class metrics_calculator():
         g_mean = float(np.sqrt(TPR * TNR)) if (TPR > 0 and TNR > 0) else 0 # Media Geometrica
         auc_roc = None
         if predicted_value is not None and actual_value is not None:
-            auc_roc = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
+            auc_roc = float(self.compute_auc(actual_value, predicted_score))  # Passiamo liste
         #if predicted_value is not None and actual_value is not None:
         #    auc_roc_2 = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
       
@@ -165,7 +166,6 @@ class metrics_calculator():
         # AUC = area sotto la curva TPR(FPR).
 
         return auc
-    '''
 
     def compute_roc_points(self, actual_value, predicted_value):
         """
@@ -248,23 +248,62 @@ class metrics_calculator():
         # Quindi trapz(TPR, FPR) calcola area sotto la curva TPR(FPR).
         auc = np.trapz(tpr_sorted, fpr_sorted)
         return auc
-    
     '''
-    def plot_roc_curve(self, actual_value, predicted_value):
+
+    def compute_roc_points(self, actual_value, predicted_scores):
         """
-        Traccia la curva ROC usando matplotlib.
+        Calcola i punti (FPR, TPR) della curva ROC usando le probabilità per la classe positiva.
+            :param actual_value (np.ndarray): Valori reali delle classi (2 o 4).
+            :param predicted_scores (np.ndarray): Probabilità previste per la classe 2.
+        
+        Returns:
+            tuple: Due numpy array contenenti i valori di FPR (False Positive Rate) e TPR (True Positive Rate).
         """
-        tpr, fpr = self.compute_roc_points(actual_value, predicted_value)
-        plt.figure(figsize=(6,6))
-        plt.plot(fpr, tpr, marker='o', linestyle='-', label='ROC Curve')
-        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Random Classifier')
-        plt.xlabel("False Positive Rate (FPR)")
-        plt.ylabel("True Positive Rate (TPR)")
-        plt.title("ROC Curve")
-        plt.legend()
-        plt.grid()
-        plt.show()
-    '''
+        thresholds = np.linspace(0, 1, num=50)  # Soglie equidistanti tra 0 e 1
+        tpr_list = []  # Lista per i True Positive Rate
+        fpr_list = []  # Lista per i False Positive Rate
+
+        for thr in thresholds:
+            pred_pos = (predicted_scores >= thr)  # Predizione positiva se score >= soglia
+            
+            # Calcolo della matrice di confusione
+            TP = np.sum((actual_value == 2) & pred_pos)
+            FP = np.sum((actual_value == 4) & pred_pos)
+            TN = np.sum((actual_value == 4) & ~pred_pos)
+            FN = np.sum((actual_value == 2) & ~pred_pos)
+
+            # Calcolo delle metriche TPR e FPR
+            TPR = TP / (TP + FN) if (TP + FN) > 0 else 0
+            FPR = FP / (FP + TN) if (FP + TN) > 0 else 0
+
+            tpr_list.append(TPR)
+            fpr_list.append(FPR)
+
+        tpr = np.array(tpr_list)
+        fpr = np.array(fpr_list)
+
+        return tpr, fpr
+
+    def compute_auc(self, actual_value, predicted_scores):
+        """
+        Calcola l'AUC-ROC usando l'integrazione numerica della curva ROC.
+
+        :param actual_value: np.ndarray, valori reali delle classi (2 o 4).
+        :param predicted_scores: np.ndarray, probabilità previste per la classe 2.
+        :return: float, valore AUC.
+        """
+        # Calcola i punti ROC
+        tpr, fpr = self.compute_roc_points(actual_value, predicted_scores)
+
+        # Ordina FPR in ordine crescente e riordina anche TPR di conseguenza
+        sorted_indices = np.argsort(fpr)
+        fpr_sorted = fpr[sorted_indices]
+        tpr_sorted = tpr[sorted_indices]
+
+        # Calcola AUC usando il metodo dei trapezi
+        auc = np.trapz(tpr_sorted, fpr_sorted)
+        return auc
+
 
     def scegli_e_stampa_metriche(self, metriche):
         """
@@ -286,3 +325,4 @@ class metrics_calculator():
         
         return metriche_filtrate
 
+    

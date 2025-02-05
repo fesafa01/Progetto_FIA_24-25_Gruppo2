@@ -106,11 +106,10 @@ else:
     raise ValueError("Scelta non valida.")
 
 # Ora possiamo usare strategy
-actual_value, predicted_value = strategy.evaluate(X, y, k) # Calcolo delle metriche
+actual_value, predicted_value, predicted_score = strategy.evaluate(X, y, k) # Calcolo delle metriche
 
 #Inizializziamo oggetto per visualizzare metriche e salvarle
-
-MetricsVisualizer = metrics_visualizer(actual_value, predicted_value)
+MetricsVisualizer = metrics_visualizer(actual_value, predicted_value, predicted_score)
 
 # Visualizziamo le metrche del modello
 MetricsVisualizer.visualizza_metriche()

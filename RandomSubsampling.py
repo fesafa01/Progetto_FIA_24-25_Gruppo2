@@ -108,6 +108,7 @@ class RandomSubsampling:
         # inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
         actual_value=[]
         predicted_value=[]
+        predicted_score=[]
         splits = self.splitter(X, y)
         
         for X_train, X_test, y_train, y_test in splits:
@@ -116,6 +117,7 @@ class RandomSubsampling:
             knn = classificatore_KNN(k=k)
             knn.fit(X_train, y_train)
             y_pred = knn.predict(X_test)
+            y_score = knn.predict_proba(X_test)
 
             # Calcolo dell'accuratezza basata sul numero di predizioni corrette
             #correct = sum(y_pred == y_test)  # Conta il numero di predizioni corrette
@@ -124,8 +126,9 @@ class RandomSubsampling:
             # accumulo i valori all'interno dei due array
             actual_value.append(y_test)
             predicted_value.append(y_pred)
+            predicted_score.append(y_score)
         
-        return actual_value, predicted_value
+        return actual_value, predicted_value, predicted_score
 
     def evaluate(self,X,y,k=3):
         """
@@ -138,10 +141,11 @@ class RandomSubsampling:
         :return: dict, dizionario contenente le metriche di valutazione del modello.
         """
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,k)
         
         # Convertiamo le liste di pandas Series in array numpy monodimensionali
         actual_value = np.concatenate(actual_value).ravel()
         predicted_value = np.concatenate(predicted_value).ravel()
+        predicted_score = np.concatenate(predicted_score).ravel()
         
-        return actual_value, predicted_value
+        return actual_value, predicted_value, predicted_score
