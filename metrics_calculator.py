@@ -93,7 +93,7 @@ class metrics_calculator():
         g_mean = float(np.sqrt(TPR * TNR)) if (TPR > 0 and TNR > 0) else 0 # Media Geometrica
         auc_roc = None
         if predicted_value is not None and actual_value is not None:
-            auc_roc = float(self.compute_auc(actual_value, predicted_value))  # Passiamo liste
+            auc_roc = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
         #if predicted_value is not None and actual_value is not None:
         #    auc_roc_2 = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
       
@@ -104,11 +104,11 @@ class metrics_calculator():
             "specificity": TNR,
             "geometric mean": g_mean,
             "area under the curve": auc_roc,
-            #"area under the curve 2": auc_roc_2
         }
 
         return metrics
     
+    '''
     def compute_auc(self, actual_value, predicted_value):
         """
         Calcola l'Area Under the Curve (AUC) della curva ROC, assumendo '2' come classe positiva.
@@ -165,7 +165,106 @@ class metrics_calculator():
         # AUC = area sotto la curva TPR(FPR).
 
         return auc
+    '''
 
+    def compute_roc_points(self, actual_value, predicted_value):
+        """
+        Calcola i punti (FPR, TPR) della curva ROC iterando su soglie esplicite.
+
+        :param actual_value: np.ndarray o lista, contiene i valori reali delle classi (2 o 4).
+        :param predicted_value: np.ndarray o lista, contiene valori predetti (2 o 4)
+        :return: (fpr, tpr) - due numpy array contenenti i valori di FPR e TPR
+                            per ciascuna soglia, in ordine crescente di soglia.
+        """
+        actual = np.array(actual_value)
+        predicted = np.array(predicted_value)
+        positive_label = 2
+
+        #print("\nDistribuzione delle classi nei valori reali:", np.unique(actual, return_counts=True))
+        #print("Distribuzione delle classi nei valori predetti:", np.unique(predicted, return_counts=True))
+
+        
+        # definizione delle soglie effettive, 2 e 4
+        thresholds = np.array([4,2])  
+
+        #Creiamo un insieme di threshold tra il valore minimo e massimo
+        #min_val, max_val = min(predicted), max(predicted)
+        #thresholds = np.linspace(min_val, max_val, num=2)
+        #print("\nThresholds considerati:", thresholds)  
+
+        # Inizializziamo due array vuoti che conterranno i TPR e FPR
+        tpr_list =[]
+        fpr_list=[]
+        
+        for m, thr in enumerate(thresholds, start=1):
+            pred_pos = (predicted <= thr)  # Binarizzazione delle predizioni: pred_pos è True se predicted <= thr
+            
+            TP = np.sum((actual == positive_label) & (pred_pos == True))
+            FP = np.sum((actual != positive_label) & (pred_pos == True))
+            TN = np.sum((actual != positive_label) & (pred_pos == False))
+            FN = np.sum((actual == positive_label) & (pred_pos == False))
+
+            # Calcoliamo FPR e TPR con la loro espressione
+            TPR = TP / (TP + FN) if (TP + FN) else 0.0
+            FPR = FP / (FP + TN) if (FP + TN) else 0.0
+
+            print(f"[Step {m}] Soglia {thr:.2f}: TP={TP}, FP={FP}, TN={TN}, FN={FN}, TPR={TPR:.3f}, FPR={FPR:.3f}")  
+            
+            # Accumuliamo i valori calcolati negli array 
+            tpr_list.append(TPR)
+            fpr_list.append(FPR)
+
+        # Convertiamo in numpy array per comodità
+        fpr = np.array(fpr_list)
+        tpr = np.array(tpr_list)
+        
+        return tpr, fpr
+
+    def compute_auc_from_roc(self, actual_value, predicted_value):
+        """
+        Calcola l'area sotto la curva ROC (AUC)
+        integrando con il metodo dei trapezi (np.trapz).
+        :param actual_value: np.ndarray o lista, contiene i valori reali delle classi (2 o 4).
+        :param predicted_value: np.ndarray o lista, contiene valori predetti (2 o 4)
+        :return: float, l'area sotto la curva ROC
+        """
+        # Chiamiamo il metodo precedente per il calcolo della curva ROC
+        tpr, fpr = self.compute_roc_points(actual_value, predicted_value)
+        #print("\nFPR:", fpr)  # DEBUG
+        #print("TPR:", tpr)    # DEBUG
+        if len(fpr) == 0 or len(tpr) == 0:
+            print("Errore: Lista FPR o TPR vuota! Controlla il calcolo della ROC.")
+            return 0.0
+    
+        # Ordiniamo i valori di FPR in ordine crescente e riordiniamo anche TPR di conseguenza
+        sorted_indices = np.argsort(fpr)  # Trova gli indici che ordinano FPR in ordine crescente
+        fpr_sorted = fpr[sorted_indices]  # Riordina FPR
+        tpr_sorted = tpr[sorted_indices]  # Riordina TPR nella stessa maniera
+
+        #print("\nFPR ordinato:", fpr_sorted)  #DEBUG
+        #print("TPR ordinato:", tpr_sorted)    #DEBUG
+
+        # np.trapz(y, x) = calcola l'integrale di y rispetto a x
+        # Quindi trapz(TPR, FPR) calcola area sotto la curva TPR(FPR).
+        auc = np.trapz(tpr_sorted, fpr_sorted)
+        return auc
+    
+    '''
+    def plot_roc_curve(self, actual_value, predicted_value):
+        """
+        Traccia la curva ROC usando matplotlib.
+        """
+        tpr, fpr = self.compute_roc_points(actual_value, predicted_value)
+        plt.figure(figsize=(6,6))
+        plt.plot(fpr, tpr, marker='o', linestyle='-', label='ROC Curve')
+        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Random Classifier')
+        plt.xlabel("False Positive Rate (FPR)")
+        plt.ylabel("True Positive Rate (TPR)")
+        plt.title("ROC Curve")
+        plt.legend()
+        plt.grid()
+        plt.show()
+    '''
 
     def scegli_e_stampa_metriche(self, metriche):
         """
