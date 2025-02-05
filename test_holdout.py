@@ -82,12 +82,43 @@ class TestHoldout(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.holdout.run(self.X, self.y, 3)
 
-    def test_evaluate(self):
-        '''
-        Verifichiamo che le metriche siano calcolate correttamente
-        '''
-        metriche = self.holdout.evaluate(self.X, self.y, 3)
-        self.assertEqual(len(metriche), 6)
+    def test_evaluate_returned_lengths(self):
+        """
+        Verifica che:
+        1. Il metodo evaluate ritorni due oggetti con la stessa lunghezza.
+        2. La lunghezza corrisponda effettivamente al test set.
+        """
+        # Richiamiamo il metodo evaluate
+        actual, predicted = self.holdout.evaluate(self.X, self.y, k=3)
+        
+        # 1) Verifichiamo che abbiano la stessa lunghezza
+        self.assertEqual(len(actual), len(predicted), "Le lunghezze di actual_value e predicted_value dovrebbero coincidere.")
+
+        # 2) Verifichiamo che la lunghezza corrisponda a test_size*len(X)
+        expected_test_length = int(len(self.X) * 0.3)
+        self.assertEqual(len(actual), expected_test_length,
+                         f"La lunghezza del test set dovrebbe essere {expected_test_length}, trovato {len(actual)}.")
+
+    def test_evaluate_raises_value_error(self):
+        """
+        Verifica che venga sollevato un ValueError:
+        - Se X e y sono vuoti
+        - Se X e y hanno lunghezze differenti
+        """
+        # 1) Caso X e y vuoti
+        empty_X = pd.DataFrame()
+        empty_y = pd.Series(dtype=int)
+
+        # Verifichiamo che sollevi ValueError su X e y vuoti
+        with self.assertRaises(ValueError):
+            self.holdout.evaluate(empty_X, empty_y, k=3)
+
+        # 2) Caso X e y di lunghezze diverse
+        # Rimuoviamo l'ultimo campione da y, creando una lunghezza differente
+        mismatched_y = self.y.iloc[:-1]  # L'ultimo elemento rimosso
+        
+        with self.assertRaises(ValueError):
+            self.holdout.evaluate(self.X, mismatched_y, k=3)
 
     
 

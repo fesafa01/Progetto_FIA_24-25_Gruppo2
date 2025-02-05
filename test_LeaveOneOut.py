@@ -73,13 +73,49 @@ class TestLeaveOneOut(unittest.TestCase):
         actual_value, predicted_value = self.loo.run(self.X, self.y, k=3)
         self.assertEqual(len(actual_value), self.K)
         self.assertEqual(len(predicted_value), self.K)
-    
-    def test_evaluate(self):
-        """Verifica che il metodo evaluate restituisca un dizionario di metriche valido."""
-        metriche = self.loo.evaluate(self.X, self.y, k=3)
-        self.assertIsInstance(metriche, dict)  # verifico che restituisca un dizionario
-        expected_keys = {'accuracy', 'error rate', 'sensitivity', 'specificity', 'geometric mean', 'area under the curve'}
-        self.assertTrue(expected_keys.issubset(metriche.keys()))  # Controlla che tutte le metriche siano presenti nel dizionario
+
+
+    def test_evaluate_output_lengths(self):
+        """
+        Verifica:
+        1) Che actual_value e predicted_value abbiano la stessa lunghezza
+        2) Che tale lunghezza corrisponda a K
+        """
+        actual_values, predicted_values = self.loo.evaluate(self.X, self.y, k=3)
+
+        # 1) Stessa lunghezza
+        self.assertEqual(len(actual_values), len(predicted_values),"I valori actual e predicted devono avere la stessa lunghezza.")
+        
+        # 2) Lunghezza pari a K
+        self.assertEqual(len(actual_values), self.K,
+                         f"La lunghezza di actual_values dovrebbe essere {self.K}, invece è {len(actual_values)}.")
+
+    def test_evaluate_raises_value_error(self):
+        """
+        Verifica che venga sollevato ValueError se:
+        - K è fuori range (1 <= K <= len(X))
+        - X e y sono vuoti
+        - X e y hanno lunghezze diverse
+        """
+        # 1) K fuori range (ad esempio K=0)
+        with self.assertRaises(ValueError):
+            LeaveOneOut(K=0).evaluate(self.X, self.y, k=3)
+        
+        # 2) K maggiore della lunghezza di X (ad es. 20 > 10)
+        with self.assertRaises(ValueError):
+            LeaveOneOut(K=20).evaluate(self.X, self.y, k=3)
+
+        # 3) X e y vuoti
+        empty_X = pd.DataFrame()
+        empty_y = pd.Series(dtype=int)
+        with self.assertRaises(ValueError):
+            LeaveOneOut(K=1).evaluate(empty_X, empty_y, k=3)
+
+        # 4) X e y di lunghezze diverse
+        mismatched_y = self.y.iloc[:-1]  # L'ultimo elemento rimosso
+        
+        with self.assertRaises(ValueError):
+            self.loo.evaluate(self.X, mismatched_y, k=3)
 
 if __name__ == '__main__':
     unittest.main()

@@ -65,9 +65,9 @@ class TestRandomSubsampling(unittest.TestCase):
         self.assertEqual(len(splits), 3)  # Deve generare esattamente 3 split
 
     def test_generate_splits_with_invalid_test_size(self):
-        """ Verifica che venga sollevato un errore se test_size non è tra 0 e 1 """
-        with self.assertRaises(ValueError):
-            RandomSubsampling(test_size=1.2)  # Valore non valido
+        """ Verifica che venga sollevato un errore se test_size è 0 """
+        '''with self.assertRaises(ValueError):
+            RandomSubsampling(test_size=1.2)  # Valore non valido''' #Pezzo di codice rimosso in quanto è stata aggiunta la funzionalità di inserire un test_size > 1, che viene diviso per 100
         with self.assertRaises(ValueError):
             RandomSubsampling(test_size=0)  # Valore non valido
 
@@ -103,20 +103,48 @@ class TestRandomSubsampling(unittest.TestCase):
             self.assertIsNotNone(y_actual)
             self.assertIsNotNone(y_pred)
 
-    def test_evaluate(self):
+
+    def test_evaluate_returned_lengths(self):
         """
-        Testa il metodo evaluate.
-        - Controlla che restituisca un dizionario con le metriche attese.
-        - Controlla la presenza delle metriche principali.
+        Testa che il metodo evaluate:
+         - Ritorni due oggetti (actual_value, predicted_value) della stessa lunghezza
+         - Tale lunghezza corrisponda alla somma dei campioni di test prelevati in tutte le suddivisioni
         """
-        metrics = self.rs.evaluate(self.X, self.y, k=3)
         
-        # Controlla che il risultato sia un dizionario
-        self.assertIsInstance(metrics, dict)
+        # Richiamiamo il metodo evaluate
+        actual, predicted = self.rs.evaluate(self.X, self.y, k=3)
         
-        # Controlla che il dizionario contenga le metriche attese
-        expected_keys = {'accuracy', 'error rate', 'sensitivity', 'specificity', 'geometric mean', 'area under the curve'}
-        self.assertTrue(expected_keys.issubset(metrics.keys()))
+        # Verifichiamo che abbiano la stessa lunghezza
+        self.assertEqual(len(actual), len(predicted),
+                         "Le lunghezze di actual_value e predicted_value dovrebbero coincidere.")
+
+        # Verifichiamo che la lunghezza corrisponda alla somma dei campioni test in tutte le split
+        # In ogni split: test_size = 30 campioni
+        # Con num_splits=5, i campioni totali in test sono 5 * 30 = 150
+        expected_length = int(len(self.X) * 0.3) * 5
+        self.assertEqual(len(actual), expected_length,
+                         f"Ci si aspetta un totale di {expected_length} campioni nel test set unendo le 5 split.")
+
+    def test_evaluate_raises_value_error(self):
+        """
+        Testa che venga sollevato ValueError:
+         - Se X e y sono vuoti
+         - Se X e y hanno lunghezze differenti
+        """
+
+        # 1) Caso X e y vuoti
+        empty_X = pd.DataFrame()
+        empty_y = pd.Series(dtype=int)
+        
+        with self.assertRaises(ValueError):
+            self.rs.evaluate(empty_X, empty_y, k=3)
+
+        # 2) Caso X e y di lunghezze differenti
+        # Eliminiamo un campione da y per creare la discrepanza
+        mismatched_y = self.y.iloc[:-1]
+        
+        with self.assertRaises(ValueError):
+            self.rs.evaluate(self.X, mismatched_y, k=3)
 
 if __name__ == '__main__':
     unittest.main()

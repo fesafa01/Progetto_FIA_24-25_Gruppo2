@@ -48,11 +48,12 @@ class metrics_visualizer():
 
         # Salva le metriche in un file Excel
         metrics_df = pd.DataFrame(self.metrics.items(), columns=["Metrica", "Valore"]) #Convertiamo in DataFrame per poi salvare su Excel
-        metrics_df.to_excel(nome_file, index=False)
+        metrics_df.to_excel(nome_file, index=False, engine="openpyxl")
         print(f"Ho salvato le metriche in {nome_file}!")
 
         """nome_file: nome del file dove salvare dati,
-        Non include l'indice del DataFrame nel file Excel,
+        Non include l'indice del DataFrame nel file Excel
+        Engine utilizzato: openpyxl
         """
 
     def plot_metrics(self) -> None:
