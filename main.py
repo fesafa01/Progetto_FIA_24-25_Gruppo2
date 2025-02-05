@@ -1,10 +1,11 @@
 from LogParser import LogParserFactory
 from preprocessing import Preprocessing
-from model_selection import ModelSelection as ms
-from metrics_calculator import metrics_calculator
-from ModelEvaluation import ModelEvaluationFactory
+import sys
 import os
-from metrics_visualizer import metrics_visualizer
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+from validation.ModelEvaluation import ModelEvaluationFactory
+from validation.model_selection import ModelSelection as ms
+from metrics.metrics_visualizer import metrics_visualizer
 
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
@@ -88,7 +89,15 @@ print(y)
 
 #Scelgo il metodo di divisione del dataset in train e test set
 choice = ms.model_selection()
-k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))
+while True:
+    try:
+        k = int(input("Inserisci il valore di k pari al numero di vicini da considerare: "))  
+        if k <= 0:  # Opzionale: impedisce numeri negativi o zero
+            print("Errore: Il numero deve essere maggiore di zero.")
+        else:
+            break  # Esce dal ciclo se l'input è valido
+    except ValueError:
+        print("Errore: Devi inserire un numero intero valido.")
 
 if choice == "1":
     test_size = input("Inserisci il valore percentuale per il test set: ")
