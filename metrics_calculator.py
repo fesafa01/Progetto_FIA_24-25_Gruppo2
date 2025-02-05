@@ -167,7 +167,7 @@ class metrics_calculator():
         return auc
 
 
-    def stampa_metriche(self, metriche):
+    def scegli_e_stampa_metriche(self, metriche):
         """
         Funzione per stampare le metriche scelte dall'utente.
         
@@ -177,10 +177,13 @@ class metrics_calculator():
         print("\nMetriche disponibili:", ", ".join(metriche.keys()))  # Mostra le metriche disponibili
         scelta = input("Vuoi stampare tutte le metriche o solo alcune? (digita 'tutte' o inserisci i nomi separati da virgola): ").strip().lower() # Eliminiamo spazi bianchi e convertiamo tutte le lettere in minuscolo
 
-        if scelta == "tutte":
+        if not scelta or scelta == "tutte": #il not scelta serve per selezionare tutte le metriche se l'utente preme invio senza digitare nulla
             print("Metriche Totali:", metriche)
+            metriche_filtrate=metriche # le metriche filtrate coincidono con quelle iniziali
         else:
             metriche_scelte = [m.strip() for m in scelta.split(",")] # Selezioniamo le metriche da stampare e rimuoviamo gli spazi in eccesso
             metriche_filtrate = {m: metriche[m] for m in metriche_scelte if m in metriche} # Filtriamo le metriche scelte e le inseriamo in un dizionario
             print("Metriche selezionate:", metriche_filtrate)
+        
+        return metriche_filtrate
 

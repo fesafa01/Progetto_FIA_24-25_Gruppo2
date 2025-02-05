@@ -52,13 +52,13 @@ class Preprocessing:
                 available_columns,
                 scorer=fuzz.WRatio
             )
-
+        
             if match and score >= threshold:
                 matched_columns[col] = match
-                print(f"Trovata corrispondenza: {col} → {match} (score: {score})")  # Debug
+            """ print(f"Trovata corrispondenza: {col} → {match} (score: {score})")  # Debug
             else:
                 print(f"Nessuna corrispondenza valida per: {col} (score massimo: {score})")  # Debug
-
+            """
         # Gestisce le colonne mancanti senza generare errori
         missing_columns = set(columns_to_keep) - set(matched_columns.keys())
         if missing_columns:

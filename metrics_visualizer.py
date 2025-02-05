@@ -28,6 +28,9 @@ class metrics_visualizer():
         # calcoliamo le metriche
         self.metrics = self.calculator.metrics_evalutation(self.matrix, self.predicted_value, self.actual_value)
 
+        self.metrics= self.calculator.scegli_e_stampa_metriche(self.metrics)
+
+
         # Plottare matrice di confusione
         self.plot_conf_matrix()
         # Plottare metriche

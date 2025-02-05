@@ -33,6 +33,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 # Apriamo una finestra di selezione file
+
 root = tk.Tk()
 root.withdraw()  # Nasconde la finestra principale
 filename = filedialog.askopenfilename(title="Seleziona il file CSV")
@@ -51,7 +52,9 @@ if not os.path.isfile(filename):
 parser = LogParserFactory().create(filename)
 
 # Carichiamo il dataset
-dataset = parser.parse(filename)        
+dataset = parser.parse(filename)       
+
+print(f"{dataset=}")
 
 #Puliamo e riordiniamo il dataset secondo le specifiche della traccia
 dataset = Preprocessing.filter_and_reorder_columns(dataset, 0.4)
@@ -66,12 +69,16 @@ dataset = Preprocessing.drop_nan_target(dataset, "Class")
 indicatore = str(input("Inserisci il metodo di sostituzione dei valori NaN (media, mediana, moda, rimuovi): "))
 dataset = Preprocessing.nan_handler(dataset, indicatore)
 
+print(f"Dataset con valori NaN sostituiti: {dataset=}")
+
 #Suddivido in features (X) e target (y)
 X, y = Preprocessing.split(dataset, "Class")
 
 # Seleziono il metodo di feature scaling delle features del dataset
 method = int(input("Scegli il metodo di feature scaling: \n1 - Standardizzazione \n2 - Normalizzazione\n"))
 X = Preprocessing.feature_scaling(X, method)
+
+print(f"Features con applicazione del metodo di feature scaling selezionato: {X=}")
 
 '''
 print(dataset)
@@ -102,6 +109,7 @@ else:
 actual_value, predicted_value = strategy.evaluate(X, y, k) # Calcolo delle metriche
 
 #Inizializziamo oggetto per visualizzare metriche e salvarle
+
 MetricsVisualizer = metrics_visualizer(actual_value, predicted_value)
 
 # Visualizziamo le metrche del modello
