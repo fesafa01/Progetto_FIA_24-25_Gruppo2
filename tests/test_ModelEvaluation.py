@@ -1,8 +1,12 @@
 import unittest 
-from ModelEvaluation import ModelSelection, ModelEvaluationFactory
-from Holdout import Holdout 
-from LeaveOneOut import LeaveOneOut
-from RandomSubsampling import RandomSubsampling
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from validation.Holdout import Holdout
+from validation.LeaveOneOut import LeaveOneOut
+from validation.RandomSubsampling import RandomSubsampling
+from validation.ModelEvaluation import ModelEvaluationFactory
+from validation.model_selection import ModelSelection
 
 class TestModelSelection(unittest.TestCase):
     

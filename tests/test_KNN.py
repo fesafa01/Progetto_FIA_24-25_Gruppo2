@@ -1,7 +1,9 @@
 import unittest
 import numpy as np
 import pandas as pd
-import random
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from classificatore_KNN import classificatore_KNN
 
 class TestKnnClassifier(unittest.TestCase):

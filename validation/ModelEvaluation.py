@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from Holdout import Holdout 
-from LeaveOneOut import LeaveOneOut
-from RandomSubsampling import RandomSubsampling
+from validation.Holdout import Holdout 
+from validation.LeaveOneOut import LeaveOneOut
+from validation.RandomSubsampling import RandomSubsampling
 
 class ModelSelection(ABC):
     '''

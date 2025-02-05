@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
-import matplotlib as plt
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from classificatore_KNN import classificatore_KNN
+
 '''
 Classe che calcola le metriche di valutazione di un modello di classificazione.
 
@@ -93,7 +96,7 @@ class metrics_calculator():
         TNR = float(TN/(TN+FP)) if (TN+FP)>0 else 0 # True Negative Rate o Specificity
         g_mean = float(np.sqrt(TPR * TNR)) if (TPR > 0 and TNR > 0) else 0 # Media Geometrica
         auc_roc = None
-        if predicted_value is not None and actual_value is not None:
+        if predicted_value is not None and actual_value is not None and predicted_score is not None:
             auc_roc = float(self.compute_auc(actual_value, predicted_score))  # Passiamo liste
         #if predicted_value is not None and actual_value is not None:
         #    auc_roc_2 = float(self.compute_auc_from_roc(actual_value, predicted_value))  # Passiamo liste
@@ -259,7 +262,7 @@ class metrics_calculator():
         Returns:
             tuple: Due numpy array contenenti i valori di FPR (False Positive Rate) e TPR (True Positive Rate).
         """
-        thresholds = np.linspace(0, 1, num=50)  # Soglie equidistanti tra 0 e 1
+        thresholds = np.linspace(1, 0, num=50)  # Soglie equidistanti tra 0 e 1
         tpr_list = []  # Lista per i True Positive Rate
         fpr_list = []  # Lista per i False Positive Rate
 
@@ -281,7 +284,7 @@ class metrics_calculator():
 
         tpr = np.array(tpr_list)
         fpr = np.array(fpr_list)
-
+    
         return tpr, fpr
 
     def compute_auc(self, actual_value, predicted_scores):
@@ -292,6 +295,10 @@ class metrics_calculator():
         :param predicted_scores: np.ndarray, probabilità previste per la classe 2.
         :return: float, valore AUC.
         """
+        # Se tutti i predicted_scores sono uguali, AUC non ha senso.
+        if len(set(predicted_scores)) < 2:
+            return 0.0
+        
         # Calcola i punti ROC
         tpr, fpr = self.compute_roc_points(actual_value, predicted_scores)
 
@@ -302,6 +309,7 @@ class metrics_calculator():
 
         # Calcola AUC usando il metodo dei trapezi
         auc = np.trapz(tpr_sorted, fpr_sorted)
+
         return auc
 
 
@@ -310,6 +318,8 @@ class metrics_calculator():
         Funzione per stampare le metriche scelte dall'utente.
         
         :param metriche: Dizionario contenente le metriche calcolate
+
+        :return: dict, dizionario contenente le metriche scelte dall'utente.
         """
         # Chiediamo all'utente quali metriche vuole stampare
         print("\nMetriche disponibili:", ", ".join(metriche.keys()))  # Mostra le metriche disponibili

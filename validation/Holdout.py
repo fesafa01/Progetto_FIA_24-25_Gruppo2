@@ -1,6 +1,5 @@
 import numpy as np
 from classificatore_KNN import classificatore_KNN
-from metrics_calculator import metrics_calculator
 
 #Implementazione del metodo di validazione Holdout, che divide il dataset in due parti: training e test set
 # in particolare, il test set è una porzione del dataset che non verrà utilizzata per l'addestramento del modello
@@ -99,9 +98,9 @@ class Holdout:
         :param y: pandas Series, rappresenta le etichette di classe del dataset.
         :param k: int, numero di vicini da considerare per il classificatore KNN.
 
-        :return:
-            - actual_value: etichette reali del test set.
-            - predicted_value: valori predetti dal modello KNN sul test set.
+       :return: actual_value (numpy array)  
+        :return: predicted_value (numpy array)
+        :return: predicted_score (numpy array)
         """
         
         
@@ -134,8 +133,9 @@ class Holdout:
         :param y: pandas Series, rappresenta le etichette di classe del dataset.
         :param k: int, numero di vicini da considerare per il classificatore KNN.
 
-        :return:
-            - metriche: dizionario contenente le metriche di valutazione del modello
+        :return: actual_value, numpy array contentente i valori reali.
+        :return: predicted_value, numpy array contentente i valori predetti.
+        :return: predicted_score, numpy array contentente gli score predetti.
         """
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)

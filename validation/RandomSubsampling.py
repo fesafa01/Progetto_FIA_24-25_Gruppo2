@@ -1,6 +1,5 @@
 import numpy as np
 from classificatore_KNN import classificatore_KNN
-from metrics_calculator import metrics_calculator
 
 """
 Questo modulo implementa il metodo di Random Subsampling per la valutazione di un modello di classificazione.
@@ -103,6 +102,7 @@ class RandomSubsampling:
         :return: 
         - actual_value: lista contenente i valori reali delle classi nei vari test set.
         - predicted_value: lista contenente i valori predetti dal modello per i vari test set.
+        - predicted_score: lista contenente i valori di score predetti dal modello per i vari test set
         """
     
         # inizializziamo due array vuoti che conterrano i valori predetti dal modello e quelli reali
@@ -138,7 +138,9 @@ class RandomSubsampling:
         :param y: pandas Series, rappresenta le etichette di classe del dataset.
         :param k: int, numero di vicini da considerare per il classificatore KNN (default = 3).
 
-        :return: dict, dizionario contenente le metriche di valutazione del modello.
+        :return: actual_value, numpy array, valori reali delle classi nei vari test set.
+        :return: predicted_value, numpy array, valori predetti dal modello per i vari test set.
+        :return: predicted_score, numpy array, valori di score predetti dal modello per i vari test set.
         """
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
         actual_value, predicted_value, predicted_score = self.run(X,y,k)

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from metrics_calculator import metrics_calculator
+from metrics.metrics_calculator import metrics_calculator
 import pandas as pd
 import numpy as np
 
@@ -36,6 +36,9 @@ class metrics_visualizer():
         self.plot_conf_matrix()
         # Plottare metriche
         self.plot_metrics()
+        # Plottare ROC curve
+        tpr, fpr = self.calculator.compute_roc_points(self.actual_value, self.predicted_score)
+        self.plot_roc_curve(fpr, tpr)
 
     def save(self, nome_file: str = "model_performance.xlsx") -> None:
         """
@@ -114,4 +117,35 @@ class metrics_visualizer():
                         va='center', ha='center', color='black')
 
         plt.title("Matrice di confusione")
+        plt.show()
+
+    def plot_roc_curve(self, fpr, tpr):
+        '''
+        Plotta la curva ROC dato il False Positive Rate (FPR) e il True Positive Rate (TPR).
+
+        :param fpr: np.ndarray, array contenente i valori di False Positive Rate.
+        :param tpr: np.ndarray, array contenente i valori di True Positive Rate.
+        '''
+
+        # Assicura che la curva inizi a (0,0) e termini a (1,1)
+        fpr = np.concatenate(([0], fpr, [1]))
+        tpr = np.concatenate(([0], tpr, [1]))
+
+        # Calcolo dell'AUC usando il metodo dei trapezi
+        auc_score = np.trapz(tpr, fpr)
+
+        # Plotta la curva ROC
+        plt.figure(figsize=(8, 6))
+        plt.plot(fpr, tpr, marker='o', linestyle='-', label=f"AUC = {auc_score:.3f}", color='blue', linewidth=2)
+        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label="Random Classifier (AUC = 0.5)")
+
+        # Etichette e titoli
+        plt.xlabel("False Positive Rate (FPR)")
+        plt.ylabel("True Positive Rate (TPR)")
+        plt.title("ROC Curve")
+        plt.legend(loc="lower right")
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.grid(True)
+
         plt.show()

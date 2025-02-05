@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import random
 from classificatore_KNN import classificatore_KNN
-from metrics_calculator import metrics_calculator
 #from appoggio import metrics_calculator
 
 #Implementazione del metodo di validazione Leave One Out, che divide per tante volte quanto è il numero di esperimenti richiesto, 
@@ -103,7 +102,7 @@ class LeaveOneOut:
             - si salvano in due variabili il valore corretto e quello predetto dal modello
             - Accumuliamo i valori reali e predetti nei due vettori creati
 
-        return: all_actual_values, all_predicted_values        
+        return: all_actual_values, all_predicted_values, all_predicted_scores        
         '''
         # Controllo su K prima di chiamare splitter
         if not 1 <= self.K <= len(X):
@@ -144,7 +143,9 @@ class LeaveOneOut:
             :param y: pandas Series, rappresenta le etichette di classe del dataset.
             :param k: int, numero di vicini da considerare per il classificatore KNN (default = 3).
 
-            :return: dict, dizionario contenente le metriche di valutazione del modello.
+            :return: actual_value, numpy array, valori reali delle etichette di classe.
+            :return: predicted_value, numpy array, valori predetti delle etichette di classe.
+            :return: predicted_score, numpy array, valori di score predetti.
         """
         # Controllo su K prima di procedere con la valutazione
         if not 1 <= self.K <= len(X):
