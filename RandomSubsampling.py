@@ -144,13 +144,4 @@ class RandomSubsampling:
         actual_value = np.concatenate(actual_value).ravel()
         predicted_value = np.concatenate(predicted_value).ravel()
         
-        # creiamo un'istanza della classe che calcola le metriche di valutazione del modello
-        Calculator = metrics_calculator()
-        
-        # calcoliamo la matrice di confusione
-        matrix = Calculator.confusion_matrix(predicted_value, actual_value)
-        
-        # calcoliamo le metriche
-        metriche = Calculator.metrics_evalutation(matrix, predicted_value, actual_value)
-        
-        return metriche
+        return actual_value, predicted_value

@@ -4,6 +4,7 @@ from model_selection import ModelSelection as ms
 from metrics_calculator import metrics_calculator
 from ModelEvaluation import ModelEvaluationFactory
 import os
+from metrics_visualizer import metrics_visualizer
 
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
@@ -98,8 +99,15 @@ else:
     raise ValueError("Scelta non valida.")
 
 # Ora possiamo usare strategy
-metriche = strategy.evaluate(X, y, k) # Calcolo delle metriche
-metriche_da_stampare = metrics_calculator() # Inizializzazione
-metriche_da_stampare.stampa_metriche(metriche) # Chiamata al metodo che stampa solo le metriche desiderate
+actual_value, predicted_value = strategy.evaluate(X, y, k) # Calcolo delle metriche
+
+#Inizializziamo oggetto per visualizzare metriche e salvarle
+MetricsVisualizer = metrics_visualizer(actual_value, predicted_value)
+
+# Visualizziamo le metrche del modello
+MetricsVisualizer.visualizza_metriche()
+
+#Salviamo le metriche in relativo file excel (Dare in input il nome del file, default:"model_performance.xlsx")
+MetricsVisualizer.save()
 
 

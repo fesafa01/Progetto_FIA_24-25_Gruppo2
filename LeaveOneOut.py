@@ -153,16 +153,7 @@ class LeaveOneOut:
         # Convertiamo predicted_value in un array numpy pulito
         predicted_value = np.array([float(y.iloc[0]) if isinstance(y, pd.Series) else float(y) for y in predicted_value])
         
-        # creiamo un'istanza della classe che calcola le metriche di valutazione del modello
-        Calculator = metrics_calculator()
-        
-        # calcoliamo la matrice di confusione
-        matrix = Calculator.confusion_matrix(predicted_value, actual_value)
-        
-        # calcoliamo le metriche
-        metriche = Calculator.metrics_evalutation(matrix, predicted_value, actual_value)
-        
-        return metriche
+        return actual_value, predicted_value
 
         
             
