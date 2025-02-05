@@ -17,6 +17,9 @@ node_modules/
 .idea/
 .vscode/
 
+# File Excel di output
+*.xlsx 
+
 # File di configurazione segreti
 .env
 
