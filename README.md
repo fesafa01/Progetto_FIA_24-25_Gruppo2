@@ -14,8 +14,12 @@ Il progetto si concentra sulla **classificazione dei tumori** come benigni o mal
 - Random Subsampling: metodo che suddivide il dataset in training e test set più volte in modo casuale per ottenere una valutazione più stabile delle prestazioni del modello.
 - Classificatore k-NN: Un modello che predice le etichette dei dati basandosi sui k nearest neighbours, utilizzando la distanza euclidea (modificabile se necessario).
 - Calcolo delle seguenti metriche per ogni metodo di validazione del modello: accuracy rate (AR), error rate (ER), sensitivity (TPR), specificity (TNR), geometric mean, area under the curve. Vengono stampate solo le metriche richieste dall'utente.
+Le metriche vengono calcolate in due metodi nel caso del Leave One Out e del Random Subsampling: il primo metodo prevede la stampa delle metriche calcolate come media delle metriche di ogni singola iterazione; il secondo metodo prevede la stampa delle emtriche calcolate aggregando le iterazioni tra di loro, quindi generando un'unica confusion matrix invece che una per ogni iterazione.
+Nel caso dell'Holdout, avendo una sola iterazione, i due metodi coicnidono, quindi viene stampato un solo tipo di metriche.
+Sono stati mantenuti entrambi i metodi per valutarne le differenze: il metodo che sfrutta la media delle metriche delle iterazioni è da considerare come standard.
 - Plot dei grafici relativi alle metriche calcolate (bar plot e line chart).
-- Plot della matrice di confusione calcolata.
+- Plot della matrice di confusione calcolata per ogni iterazione.
+- Box plot delle metriche (per i metodi Leave One Out e Random Subsampling).
 - Salvataggio delle metriche in un apposito file .xlsx (con possibilità di nominare il file generato).
 ---
 
