@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 from metrics.metrics_calculator import metrics_calculator
 import pandas as pd
 import numpy as np
-
+import os
+import platform
 
 class metrics_visualizer():
 
@@ -43,8 +44,11 @@ class metrics_visualizer():
     def save(self, nome_file: str = "model_performance.xlsx") -> None:
         """
         Salva le metriche calcolate in un file Excel.
+        Salva le metriche calcolate in un file Excel, rilevando automaticamente
+        se il codice è in esecuzione in Docker, sulla macchina virtuale o su quella locale.    
 
-        Args:     nome_file (str): Nome del file Excel. Default: "model_performance.xlsx".
+        Args:  nome_file (str): Nome del file Excel. Default: "model_performance.xlsx".
+        
         """
         if not self.metrics:
             print("Eseguire 'visualizza_metriche()' prima di salvare le metriche.")
@@ -52,12 +56,53 @@ class metrics_visualizer():
 
         # Salva le metriche in un file Excel
         metrics_df = pd.DataFrame(self.metrics.items(), columns=["Metrica", "Valore"]) #Convertiamo in DataFrame per poi salvare su Excel
-        metrics_df.to_excel(nome_file, index=False)
-        print(f"Ho salvato le metriche in {nome_file}!")
-
-        """nome_file: nome del file dove salvare dati,
+        
+        """
+        nome_file: nome del file dove salvare dati,
         Non include l'indice del DataFrame nel file Excel,
         """
+
+        # Identifichiamo se ci troviamo sulla macchina virtuale o sulla macchina locale
+        hostname = platform.node()
+        if "osboxes" in hostname:  # Se siamo sulla macchina virtuale
+            output_dir = "/home/osboxes/Progetto_FIA_24-25_Gruppo2/output"
+        elif os.path.exists("/app"):  # Se siamo in Docker
+                output_dir = "/app/output"
+        else:  # Se siamo sulla macchina locale
+                output_dir = os.path.join(os.getcwd(), "output") # Salva nella cartella locale 'output'
+        
+        output_file = os.path.join(output_dir, nome_file)
+
+        # Controlliamo se la cartella esiste
+        if not os.path.exists(output_dir):
+            print(f"Creazione della cartella: {output_dir}")
+            os.makedirs(output_dir, exist_ok=True)
+
+        # Salva il file Excel
+        try:
+            metrics_df.to_excel(output_file, index=False)
+            print(f"File salvato con successo in: {output_file}")
+        except Exception as e:
+            print(f"Errore durante il salvataggio del file: {e}")
+            
+            '''
+            #---------SALVATAGGIO IN SITO REMOTO-------------
+            # Definiamo il percorso di salvataggio
+            output_dir = "/home/osboxes/Progetto_FIA_24-25_Gruppo2/output"
+            output_file = "/output/model_performance.xlsx"
+
+            # Controlliamo se la cartella esiste
+            if not os.path.exists(output_dir):
+                #print(f"Creazione della cartella: {output_dir}")
+                os.makedirs(output_dir, exist_ok=True)
+
+            # Salva il file
+            try:
+                metrics_df.to_excel(output_file, index=False)
+                print(f"File salvato con successo in: {output_file}")
+            except Exception as e:
+                print(f"Errore durante il salvataggio del file: {e}")
+            '''       
 
     def plot_metrics(self) -> None:
         """
