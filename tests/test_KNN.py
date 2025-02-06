@@ -4,7 +4,7 @@ import pandas as pd
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 
 class TestKnnClassifier(unittest.TestCase):
     # testiamo tutti i metodi della classe classificatore_KNN
@@ -16,21 +16,8 @@ class TestKnnClassifier(unittest.TestCase):
         knn = classificatore_KNN()
         self.assertEqual(knn.k, 3)
         self.assertIsNotNone(knn.fun_distanza)
-        self.assertEqual(knn.fun_distanza, knn.distanza_euclidea)
         self.assertIsNone(knn.X_train)
         self.assertIsNone(knn.y_train)
-
-    def test_init_custom_distance(self):
-        """
-        Verifica che il classificatore accetti una funzione di distanza personalizzata.
-        """
-
-        def custom_distance(x1, x2):
-            return np.zeros((len(x1), len(x2)))  # usiamo una distanza fittizia, zero-dist
-
-        knn = classificatore_KNN(k=5, fun_distanza=custom_distance)
-        self.assertEqual(knn.k, 5)
-        self.assertEqual(knn.fun_distanza, custom_distance) # verifichiamo che venga acquisita dal classificatore
 
     def test_fit_wrong_types(self):
         """
@@ -60,7 +47,7 @@ class TestKnnClassifier(unittest.TestCase):
         """
         Testa la funzione distanza_euclidea con dati noti.
         """
-        knn = classificatore_KNN()  # useremo solo la funzione distanza_euclidea
+        knn = classificatore_KNN(1)  # useremo solo la funzione distanza_euclidea
         X1 = np.array([[0, 0], [3, 4]])  # 2 punti
         X2 = np.array([[6, 8]])          # 1 punto
 
@@ -69,7 +56,7 @@ class TestKnnClassifier(unittest.TestCase):
         # Distanza tra (0,0) e (6,8) = sqrt(36 + 64) = 10
         # Distanza tra (3,4) e (6,8) = sqrt(9 + 16) = 5
         # Risultato atteso: [[10.0], [5.0]]
-        distanze = knn.distanza_euclidea(X1, X2)
+        distanze = knn.fun_distanza.calcola(X1, X2)
         
         self.assertEqual(distanze.shape, (2, 1)) # verifichiamo le dimensioni
         self.assertAlmostEqual(distanze[0, 0], 10.0) # distanza tra [0, 0] e [6, 8]

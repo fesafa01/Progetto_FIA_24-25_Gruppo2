@@ -71,7 +71,7 @@ class TestHoldout(unittest.TestCase):
         Verifica che il metodo run venga eseguito correttamente con i dati forniti.
         
         """
-        self.holdout.run(self.X, self.y, 3)
+        self.holdout.run(self.X, self.y, choice_distance=1, k=3)
         self.assertTrue(True)
 
     def test_run_empty_X(self):
@@ -80,7 +80,7 @@ class TestHoldout(unittest.TestCase):
         '''
         self.X = pd.DataFrame()
         with self.assertRaises(ValueError):
-            self.holdout.run(self.X, self.y, 3)
+            self.holdout.run(self.X, self.y, choice_distance=1, k=3)
 
     def test_run_empty_y(self):
         '''
@@ -88,7 +88,7 @@ class TestHoldout(unittest.TestCase):
         '''
         self.y = pd.Series()
         with self.assertRaises(ValueError):
-            self.holdout.run(self.X, self.y, 3)
+            self.holdout.run(self.X, self.y, choice_distance=1, k=3)
 
     def test_evaluate_returned_lengths(self):
         """
@@ -97,7 +97,7 @@ class TestHoldout(unittest.TestCase):
         2. La lunghezza corrisponda effettivamente al test set.
         """
         # Richiamiamo il metodo evaluate
-        actual, predicted, score = self.holdout.evaluate(self.X, self.y, k=3)
+        actual, predicted, score = self.holdout.evaluate(self.X, self.y, choice_distance=1,k=3)
         
         # 1) Verifichiamo che abbiano la stessa lunghezza
         self.assertEqual(len(actual), len(predicted), "Le lunghezze di actual_value e predicted_value dovrebbero coincidere.")
@@ -119,14 +119,14 @@ class TestHoldout(unittest.TestCase):
 
         # Verifichiamo che sollevi ValueError su X e y vuoti
         with self.assertRaises(ValueError):
-            self.holdout.evaluate(empty_X, empty_y, k=3)
+            self.holdout.evaluate(empty_X, empty_y, choice_distance=1,k=3)
 
         # 2) Caso X e y di lunghezze diverse
         # Rimuoviamo l'ultimo campione da y, creando una lunghezza differente
         mismatched_y = self.y.iloc[:-1]  # L'ultimo elemento rimosso
         
         with self.assertRaises(ValueError):
-            self.holdout.evaluate(self.X, mismatched_y, k=3)
+            self.holdout.evaluate(self.X, mismatched_y, choice_distance=1,k=3)
 
     
 

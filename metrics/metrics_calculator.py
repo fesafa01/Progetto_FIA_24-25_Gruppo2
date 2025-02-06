@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 
 '''
 Classe che calcola le metriche di valutazione di un modello di classificazione.

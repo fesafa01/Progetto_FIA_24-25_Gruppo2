@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from validation.ModelEvaluation import ModelEvaluationFactory
 from validation.model_selection import ModelSelection as ms
 from metrics.metrics_visualizer import metrics_visualizer
+from classificatore.distance_selection import DistanceSelection as ds
 
 # Definiamo il valore di default per il file
 DEFAULT_FILENAME = "version_1.csv"
@@ -86,6 +87,8 @@ print(dataset)
 print(X)
 print(y)
 '''
+choice_distance = ds.distance_selection()
+choice_distance=int(choice_distance)
 
 #Scelgo il metodo di divisione del dataset in train e test set
 choice = ms.model_selection()
@@ -115,7 +118,7 @@ else:
     raise ValueError("Scelta non valida.")
 
 # Ora possiamo usare strategy
-actual_value, predicted_value, predicted_score = strategy.evaluate(X, y, k) # Calcolo delle metriche
+actual_value, predicted_value, predicted_score = strategy.evaluate(X, y, choice_distance, k) # Calcolo delle metriche
 
 #Inizializziamo oggetto per visualizzare metriche e salvarle
 MetricsVisualizer = metrics_visualizer(actual_value, predicted_value, predicted_score)

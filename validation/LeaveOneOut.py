@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 #from appoggio import metrics_calculator
 
 #Implementazione del metodo di validazione Leave One Out, che divide per tante volte quanto è il numero di esperimenti richiesto, 
@@ -88,11 +88,12 @@ class LeaveOneOut:
 
         return splits
 
-    def run(self,X,y,k=3):
+    def run(self,X,y,choice_distance,k=3):
         '''
         Metodo che esegue il classificatore KNN K volte, una per ogni campione.
         parametro X: pandas DataFrame, features del dataset
         parametro Y: pandas Series, target del dataset
+        parametro choice_distance: str, tipo di distanza da utilizzare.
         parametro k: int, numero di vicini da considerare per il classificatore KNN (default = 3)
 
         Fasi del ciclo: 
@@ -114,7 +115,7 @@ class LeaveOneOut:
         all_predicted_values=[]
         all_predicted_scores=[]
             
-        knn = classificatore_KNN(k=k) # si inizializza il KNN
+        knn = classificatore_KNN(choice_distance,k=k) # si inizializza il KNN
         for X_train, y_train, X_test, y_test in splits:
             # si allena il modello sul training set specifico per l'iterazione a cui ci troviamo
             knn.fit(X_train, y_train)
@@ -135,12 +136,13 @@ class LeaveOneOut:
         
         return all_actual_values, all_predicted_values, all_predicted_scores
             
-    def evaluate(self,X,y,k=3):       
+    def evaluate(self,X,y,choice_distance, k=3):       
         """
             Metodo per valutare le prestazioni del modello KNN utilizzando il metodo LeaveOneOut.
 
             :param X: pandas DataFrame, rappresenta le feature del dataset.
             :param y: pandas Series, rappresenta le etichette di classe del dataset.
+            :param choice_distance: str, tipo di distanza da utilizzare.
             :param k: int, numero di vicini da considerare per il classificatore KNN (default = 3).
 
             :return: actual_value, numpy array, valori reali delle etichette di classe.
@@ -152,7 +154,7 @@ class LeaveOneOut:
             raise ValueError(f"Errore: il numero di esperimenti deve essere compreso tra 1 e {len(X)}.")
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value, predicted_score = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,choice_distance,k)
 
         # Assicuriamoci che actual_value sia una lista di numeri, non una lista di scalari separati
         actual_value = np.array(actual_value).ravel()

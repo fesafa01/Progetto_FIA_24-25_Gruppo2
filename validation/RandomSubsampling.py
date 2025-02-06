@@ -1,5 +1,5 @@
 import numpy as np
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 
 """
 Questo modulo implementa il metodo di Random Subsampling per la valutazione di un modello di classificazione.
@@ -91,7 +91,7 @@ class RandomSubsampling:
         
         return splits
     
-    def run(self, X, y, k=3):
+    def run(self, X, y, choice_distance, k=3):
         """
         Esegue il random subsampling e calcola l'accuratezza media del classificatore KNN.
         
@@ -114,7 +114,7 @@ class RandomSubsampling:
         for X_train, X_test, y_train, y_test in splits:
 
             # inizializzazione e addestramento del modello KNN per ogni split
-            knn = classificatore_KNN(k=k)
+            knn = classificatore_KNN(choice_distance, k=k)
             knn.fit(X_train, y_train)
             y_pred = knn.predict(X_test)
             y_score = knn.predict_proba(X_test)
@@ -130,7 +130,7 @@ class RandomSubsampling:
         
         return actual_value, predicted_value, predicted_score
 
-    def evaluate(self,X,y,k=3):
+    def evaluate(self,X,y,choice_distance,k=3):
         """
         Metodo per valutare le prestazioni del modello KNN utilizzando il metodo Random Subsampling.
 
@@ -143,7 +143,7 @@ class RandomSubsampling:
         :return: predicted_score, numpy array, valori di score predetti dal modello per i vari test set.
         """
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value, predicted_score = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,choice_distance,k)
         
         # Convertiamo le liste di pandas Series in array numpy monodimensionali
         actual_value = np.concatenate(actual_value).ravel()

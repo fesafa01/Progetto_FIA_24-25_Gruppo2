@@ -18,7 +18,7 @@ class ModelSelection:
         }
         
         chosen_method = methods.get(choice, 'Scelta non valida') # Recupera il metodo corrispondente, se non esiste restituisce 'Scelta non valida'
-        print(f"Utente ha scelto: {chosen_method}") # Stampa del metodo scelto
+        print(f"Utente ha scelto:\n                 {chosen_method}\n") # Stampa del metodo scelto
 
         return choice
     

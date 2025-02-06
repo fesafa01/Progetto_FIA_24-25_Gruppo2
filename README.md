@@ -7,6 +7,7 @@ Il progetto si concentra sulla **classificazione dei tumori** come benigni o mal
 
 ## Funzionalità
 - Inserimento dinamico del percorso e del nome del file, contenente il dataset.
+- Selezione interattiva nella scelta del tipo di distanza da utilizzare nella predizione.
 - Selezione interattiva nella scelta del modello da applicare per dividere il dataset ed eventuali parametri caratteristici di questi modelli.
 - Holdout: metodo che permette la suddivisione di features e labels in train e test usati per l'addestramento e la valutazione del modello.
 - Leave-one-out: metodo che permette di suddivere per tante volte quanto è il numero di campioni, il dataset in training e test set, costituito in ogni iterazione da un solo campione. Il metodo permette di addestrare e testare il classificatore al fine di validarlo.
@@ -62,6 +63,13 @@ Durante l'esecuzione, il programma chiederà all'utente di specificare i seguent
    - Gestione dei valori NaN (mancanti) scegliendo tra:
      - Sostituzione con **media**, **mediana** o **moda**.
      - Eliminazione delle righe con dati mancanti.
+
+2. **Tipologia di distanza da utilizzare**:
+   - **1 - Distanza Euclidea**
+   - **2 - Distanza Manhattan**
+   - **3 - Distanza Minkowski**
+   - **4 - Distanza Chebyshev**
+   - **5 - Distanza Coseno**
 
 2. **Metodo di suddivisione del dataset**:
    - **1 - Holdout**: Il dataset viene diviso in training e test set in base alla percentuale specificata (es. 70% train, 30% test).
