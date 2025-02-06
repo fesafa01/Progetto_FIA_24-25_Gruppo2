@@ -66,6 +66,11 @@ class TestHoldout(unittest.TestCase):
             self.holdout.splitter(self.X, self.y)
     
     def test_run(self):
+        """
+        Testa l'esecuzione del metodo run della classe holdout.
+        Verifica che il metodo run venga eseguito correttamente con i dati forniti.
+        
+        """
         self.holdout.run(self.X, self.y, 3)
         self.assertTrue(True)
 
