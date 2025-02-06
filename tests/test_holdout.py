@@ -92,7 +92,7 @@ class TestHoldout(unittest.TestCase):
         2. La lunghezza corrisponda effettivamente al test set.
         """
         # Richiamiamo il metodo evaluate
-        actual, predicted = self.holdout.evaluate(self.X, self.y, k=3)
+        actual, predicted, score = self.holdout.evaluate(self.X, self.y, k=3)
         
         # 1) Verifichiamo che abbiano la stessa lunghezza
         self.assertEqual(len(actual), len(predicted), "Le lunghezze di actual_value e predicted_value dovrebbero coincidere.")

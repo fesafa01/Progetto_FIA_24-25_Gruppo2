@@ -96,15 +96,18 @@ class TestRandomSubsampling(unittest.TestCase):
         - Controlla che restituisca due liste della stessa lunghezza.
         - Controlla che i valori reali e predetti siano effettivamente popolati.
         """
-        actual_value, predicted_value = self.rs.run(self.X, self.y, k=3)
+        actual_value, predicted_value, predicted_score = self.rs.run(self.X, self.y, k=3)
         
         # Controlla che siano liste della stessa lunghezza
         self.assertEqual(len(actual_value), len(predicted_value))
+        self.assertEqual(len(actual_value), len(predicted_score))
         
         # Controlla che nessun valore sia None
         for y_actual, y_pred in zip(actual_value, predicted_value):
             self.assertIsNotNone(y_actual)
             self.assertIsNotNone(y_pred)
+            
+
 
 
     def test_evaluate_returned_lengths(self):
@@ -115,11 +118,13 @@ class TestRandomSubsampling(unittest.TestCase):
         """
         
         # Richiamiamo il metodo evaluate
-        actual, predicted = self.rs.evaluate(self.X, self.y, k=3)
+        actual, predicted, score = self.rs.evaluate(self.X, self.y, k=3)
         
         # Verifichiamo che abbiano la stessa lunghezza
         self.assertEqual(len(actual), len(predicted),
                          "Le lunghezze di actual_value e predicted_value dovrebbero coincidere.")
+        self.assertEqual(len(actual), len(score),
+                         "Le lunghezze di actual_value e score dovrebbero coincidere.")
 
         # Verifichiamo che la lunghezza corrisponda alla somma dei campioni test in tutte le split
         # In ogni split: test_size = 30 campioni

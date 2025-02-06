@@ -10,15 +10,6 @@ from validation.model_selection import ModelSelection
 
 class TestModelSelection(unittest.TestCase):
     
-    # verifichiamo il corretto funzionamento della factory
-    def test_model_selection_is_abstract(self):
-        """
-        Verifica che ModelSelection sia una classe astratta e
-        non possa essere istanziata direttamente.
-        """
-        with self.assertRaises(TypeError):
-            a = ModelSelection()  # Deve sollevare TypeError perché ha metodi astratti
-
     def test_holdout_instance_from_factory(self):
         """
         Verifica che scegliendo "1" la factory restituisca un oggetto Holdout

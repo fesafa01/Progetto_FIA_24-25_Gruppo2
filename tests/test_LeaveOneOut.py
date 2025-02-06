@@ -72,9 +72,10 @@ class TestLeaveOneOut(unittest.TestCase):
         
     def test_run(self):
         """Verifica che il metodo run restituisca liste di lunghezza corretta (K)."""
-        actual_value, predicted_value = self.loo.run(self.X, self.y, k=3)
+        actual_value, predicted_value, score = self.loo.run(self.X, self.y, k=3)
         self.assertEqual(len(actual_value), self.K)
         self.assertEqual(len(predicted_value), self.K)
+        self.assertEqual(len(score), self.K)
 
 
     def test_evaluate_output_lengths(self):
@@ -83,7 +84,7 @@ class TestLeaveOneOut(unittest.TestCase):
         1) Che actual_value e predicted_value abbiano la stessa lunghezza
         2) Che tale lunghezza corrisponda a K
         """
-        actual_values, predicted_values = self.loo.evaluate(self.X, self.y, k=3)
+        actual_values, predicted_values, score = self.loo.evaluate(self.X, self.y, k=3)
 
         # 1) Stessa lunghezza
         self.assertEqual(len(actual_values), len(predicted_values),"I valori actual e predicted devono avere la stessa lunghezza.")
