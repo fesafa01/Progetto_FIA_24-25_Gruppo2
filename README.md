@@ -71,15 +71,16 @@ Durante l'esecuzione, il programma chiederà all'utente di specificare i seguent
    - **4 - Distanza Chebyshev**
    - **5 - Distanza Coseno**
 
-3. **Metodo di suddivisione del dataset**:
+2. **Metodo di suddivisione del dataset**:
    - **1 - Holdout**: Il dataset viene diviso in training e test set in base alla percentuale specificata (es. 70% train, 30% test).
    - **2 - Leave-One-Out**: Ogni campione viene utilizzato come test set in iterazioni successive (K specificato dall'utente).
    - **3 - Random Subsampling**: Il dataset viene diviso casualmente in training e test set più volte (K specificato dall'utente).
 
-4. **Numero di vicini (*k*)**:
+
+3. **Numero di vicini (*k*)**:
    - L’utente può specificare il valore di *k* (numero di vicini, diverso da K) per il classificatore k-NN.
 
-5. **Scelta delle metriche di valutazione**:
+4. **Scelta delle metriche di valutazione**:
    - L'utente può selezionare una o più metriche tra:
      - **Accuracy Rate (AR)** - Percentuale di predizioni corrette rispetto al totale dei campioni: **AR = (TP + TN) / (TP + TN + FP + FN)**
      - **Error Rate (ER)** - Percentuale di errori nel modello: **ER = (FP + FN) / (TP + TN + FP + FN)**
@@ -89,7 +90,7 @@ Durante l'esecuzione, il programma chiederà all'utente di specificare i seguent
      - **Area Under the Curve (AUC-ROC)** - Misura complessiva delle prestazioni del modello sulla curva ROC: **AUC = ∫ TPR(FPR) dFPR**
 
 
-6. **Formato dell'output**:
+5. **Formato dell'output**:
    - Possibilità di esportare i risultati in un file `.xlsx` e visualizzare i grafici generati.
 
 ---

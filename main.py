@@ -105,6 +105,7 @@ while True:
 if choice == "1":
     test_size = input("Inserisci il valore percentuale per il test set: ")
     strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size)
+    K = 1
 
 elif choice == "2":
         K = int(input(f"Inserisci il numero di esperimenti (intero) tra 1 e {len(X)}: "))
@@ -114,6 +115,7 @@ elif choice == "3":
     test_size = input("Inserisci il valore percentuale per il test set: ")
     num_splits = int(input("Inserisci il numero di splits: "))
     strategy = ModelEvaluationFactory.get_validation_strategy(choice, test_size=test_size, num_splits=num_splits)
+    K = num_splits
 else:
     raise ValueError("Scelta non valida.")
 
@@ -124,6 +126,12 @@ actual_value, predicted_value, predicted_score = strategy.evaluate(X, y, choice_
 MetricsVisualizer = metrics_visualizer(actual_value, predicted_value, predicted_score)
 
 # Visualizziamo le metrche del modello
+if choice=="2" or choice=="3":
+    print("\nCalcolo delle Metriche come media delle metriche delle singole iterazioni...")
+    MetricsVisualizer.get_avg_metrics(K, len(actual_value))
+    print("\nCalcolo delle Metriche aggregando tutte le iterazioni...")
+elif choice=="1": 
+    print("Calcolo le Metriche...")
 MetricsVisualizer.visualizza_metriche()
 
 #Salviamo le metriche in relativo file excel (Dare in input il nome del file, default:"model_performance.xlsx")
