@@ -96,7 +96,7 @@ class TestRandomSubsampling(unittest.TestCase):
         - Controlla che restituisca due liste della stessa lunghezza.
         - Controlla che i valori reali e predetti siano effettivamente popolati.
         """
-        actual_value, predicted_value, predicted_score = self.rs.run(self.X, self.y, k=3)
+        actual_value, predicted_value, predicted_score = self.rs.run(self.X, self.y, choice_distance=1, k=3)
         
         # Controlla che siano liste della stessa lunghezza
         self.assertEqual(len(actual_value), len(predicted_value))
@@ -118,7 +118,7 @@ class TestRandomSubsampling(unittest.TestCase):
         """
         
         # Richiamiamo il metodo evaluate
-        actual, predicted, score = self.rs.evaluate(self.X, self.y, k=3)
+        actual, predicted, score = self.rs.evaluate(self.X, self.y, choice_distance=1, k=3)
         
         # Verifichiamo che abbiano la stessa lunghezza
         self.assertEqual(len(actual), len(predicted),
@@ -145,14 +145,14 @@ class TestRandomSubsampling(unittest.TestCase):
         empty_y = pd.Series(dtype=int)
         
         with self.assertRaises(ValueError):
-            self.rs.evaluate(empty_X, empty_y, k=3)
+            self.rs.evaluate(empty_X, empty_y, choice_distance=1, k=3)
 
         # 2) Caso X e y di lunghezze differenti
         # Eliminiamo un campione da y per creare la discrepanza
         mismatched_y = self.y.iloc[:-1]
         
         with self.assertRaises(ValueError):
-            self.rs.evaluate(self.X, mismatched_y, k=3)
+            self.rs.evaluate(self.X, mismatched_y, choice_distance=1, k=3)
 
 if __name__ == '__main__':
     unittest.main()

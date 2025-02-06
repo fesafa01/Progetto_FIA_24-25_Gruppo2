@@ -1,5 +1,5 @@
 import numpy as np
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 
 #Implementazione del metodo di validazione Holdout, che divide il dataset in due parti: training e test set
 # in particolare, il test set è una porzione del dataset che non verrà utilizzata per l'addestramento del modello
@@ -90,7 +90,7 @@ class Holdout:
 
         return X_train, y_train, X_test, y_test
 
-    def run(self, X,y,k=3):
+    def run(self, X,y,choice_distance,k=3):
         """
         Addestra e testa un classificatore KNN utilizzando la suddivisione del dataset in training e test set.
         
@@ -108,7 +108,7 @@ class Holdout:
         X_train, y_train, X_test, y_test = self.splitter(X,y)
 
         # si crea il KNN con il parametro k specifico per l'iterazione a cui ci troviamo
-        knn = classificatore_KNN(k)
+        knn = classificatore_KNN(choice_distance, k)
             
         # si allena il modello sul training set specifico per l'iterazione a cui ci troviamo
         knn.fit(X_train, y_train)
@@ -125,7 +125,7 @@ class Holdout:
 
         return actual_value, predicted_value, predicted_score
 
-    def evaluate(self, X,y,k=3):
+    def evaluate(self, X,y,choice_distance,k=3):
         """
         Valuta le prestazioni del classificatore KNN utilizzando il metodo Holdout.
 
@@ -139,6 +139,6 @@ class Holdout:
         """
         
         # Eseguiamo il metodo run per ottenere i valori reali (actual) e predetti (predicted)
-        actual_value, predicted_value, predicted_score = self.run(X,y,k)
+        actual_value, predicted_value, predicted_score = self.run(X,y,choice_distance,k)
     
         return actual_value, predicted_value, predicted_score

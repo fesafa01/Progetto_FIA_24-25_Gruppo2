@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from classificatore_KNN import classificatore_KNN
+from classificatore.classificatore_KNN import classificatore_KNN
 
 '''
 Classe che calcola le metriche di valutazione di un modello di classificazione.
@@ -112,6 +114,80 @@ class metrics_calculator():
 
         return metrics
     
+    @staticmethod
+    def compute_batch_metrics(actual_value, predicted_value, predicted_score, K, sample_size):
+        """
+        Calcola le metriche in batch su più esperimenti e salva la distribuzione sulle folds.
+        """
+        metrics_calc = metrics_calculator()
+        metrics_data = {
+            "fold": [],
+            "accuracy": [],
+            "error rate": [],
+            "sensitivity": [],
+            "specificity": [],
+            "geometric mean": [],
+            "area under the curve": []
+        }
+
+        for i in range(K):
+            start_idx = i * sample_size
+            end_idx = start_idx + sample_size
+            
+            actual_batch = actual_value[start_idx:end_idx]
+            predicted_batch = predicted_value[start_idx:end_idx]
+            score_batch = predicted_score[start_idx:end_idx]
+            
+            conf_matrix = metrics_calc.confusion_matrix(predicted_batch, actual_batch)
+            metrics = metrics_calc.metrics_evalutation(conf_matrix, predicted_batch, actual_batch, score_batch)
+            
+            metrics_data["fold"].append(i + 1)
+            metrics_data["accuracy"].append(metrics["accuracy"])
+            metrics_data["error rate"].append(metrics["error rate"])
+            metrics_data["sensitivity"].append(metrics["sensitivity"])
+            metrics_data["specificity"].append(metrics["specificity"])
+            metrics_data["geometric mean"].append(metrics["geometric mean"])
+            metrics_data["area under the curve"].append(metrics["area under the curve"])
+
+        # Convertiamo in DataFrame
+        df_metrics = pd.DataFrame(metrics_data)
+        
+        # Calcoliamo la media delle metriche
+        avg_metrics = df_metrics.drop(columns=["fold"]).mean().to_dict()
+
+        # Visualizzazione della distribuzione delle metriche
+        metrics_calc.plot_metrics_distribution(df_metrics)
+
+        return avg_metrics
+
+    @staticmethod
+    def plot_metrics_distribution(df_metrics):
+        """
+        Genera un unico boxplot per la distribuzione delle metriche sulle folds.
+        """
+        plt.figure(figsize=(12, 6))
+        sns.boxplot(data=df_metrics.drop(columns=["fold"]))
+        plt.title("Distribuzione delle metriche sulle folds")
+        plt.xlabel("Metriche")
+        plt.ylabel("Valori")
+        plt.xticks(rotation=45)  # Ruota le etichette per leggibilità
+        plt.grid(True, linestyle="--", alpha=0.5)
+        plt.show()
+        
+        # Scatter plot dell'andamento delle metriche per fold
+        metrics = ["accuracy", "error rate", "sensitivity", "specificity", "geometric mean", "area under the curve"]
+
+        plt.figure(figsize=(10, 6))
+        for metric in metrics:
+            plt.plot(df_metrics["fold"], df_metrics[metric], marker='o', label=metric)
+        
+        plt.xlabel("Fold")
+        plt.ylabel("Valore della metrica")
+        plt.title("Andamento delle metriche sulle diverse folds")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
     '''
     def compute_auc(self, actual_value, predicted_value):
         """

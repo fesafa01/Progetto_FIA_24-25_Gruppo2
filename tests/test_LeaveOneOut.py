@@ -29,11 +29,11 @@ class TestLeaveOneOut(unittest.TestCase):
 
         loocv = LeaveOneOut(0)  # Istanza con K = 0 (non valido)
         with self.assertRaises(ValueError):  
-            loocv.run(self.X, self.y, k=3)  # Deve sollevare l'errore perché K < 1
+            loocv.run(self.X, self.y, choice_distance=1, k=3)  # Deve sollevare l'errore perché K < 1
 
         loocv = LeaveOneOut(-5)  # Istanza con K negativo
         with self.assertRaises(ValueError):  
-            loocv.evaluate(self.X, self.y, k=3)  # Deve sollevare l'errore perché K < 1
+            loocv.evaluate(self.X, self.y, choice_distance=1,k=3)  # Deve sollevare l'errore perché K < 1
     
     def test_valid_K(self):
         """Verifica che LeaveOneOut funzioni correttamente con un valore valido di K."""
@@ -53,14 +53,14 @@ class TestLeaveOneOut(unittest.TestCase):
             loocv.splitter(self.X, empty_y)  # y vuoto
         
         with self.assertRaises(ValueError):
-            loocv.run(empty_X, self.y, k=3)  # X vuoto
+            loocv.run(empty_X, self.y, choice_distance=1, k=3)  # X vuoto
         with self.assertRaises(ValueError):
-            loocv.run(self.X, empty_y, k=3)  # y vuoto
+            loocv.run(self.X, empty_y, choice_distance=1, k=3)  # y vuoto
         
         with self.assertRaises(ValueError):
-            loocv.evaluate(empty_X, self.y, k=3)  # X vuoto
+            loocv.evaluate(empty_X, self.y, choice_distance=1,k=3)  # X vuoto
         with self.assertRaises(ValueError):
-            loocv.evaluate(self.X, empty_y, k=3)  # y vuoto
+            loocv.evaluate(self.X, empty_y, choice_distance=1,k=3)  # y vuoto
         
     def test_splitter(self):
         """Verifica che il metodo splitter restituisca il numero corretto di suddivisioni."""
@@ -72,7 +72,7 @@ class TestLeaveOneOut(unittest.TestCase):
         
     def test_run(self):
         """Verifica che il metodo run restituisca liste di lunghezza corretta (K)."""
-        actual_value, predicted_value, score = self.loo.run(self.X, self.y, k=3)
+        actual_value, predicted_value, score = self.loo.run(self.X, self.y, choice_distance=1, k=3)
         self.assertEqual(len(actual_value), self.K)
         self.assertEqual(len(predicted_value), self.K)
         self.assertEqual(len(score), self.K)
@@ -84,7 +84,7 @@ class TestLeaveOneOut(unittest.TestCase):
         1) Che actual_value e predicted_value abbiano la stessa lunghezza
         2) Che tale lunghezza corrisponda a K
         """
-        actual_values, predicted_values, score = self.loo.evaluate(self.X, self.y, k=3)
+        actual_values, predicted_values, score = self.loo.evaluate(self.X, self.y, choice_distance=1, k=3)
 
         # 1) Stessa lunghezza
         self.assertEqual(len(actual_values), len(predicted_values),"I valori actual e predicted devono avere la stessa lunghezza.")
@@ -102,23 +102,23 @@ class TestLeaveOneOut(unittest.TestCase):
         """
         # 1) K fuori range (ad esempio K=0)
         with self.assertRaises(ValueError):
-            LeaveOneOut(K=0).evaluate(self.X, self.y, k=3)
+            LeaveOneOut(K=0).evaluate(self.X, self.y, choice_distance=1, k=3)
         
         # 2) K maggiore della lunghezza di X (ad es. 20 > 10)
         with self.assertRaises(ValueError):
-            LeaveOneOut(K=20).evaluate(self.X, self.y, k=3)
+            LeaveOneOut(K=20).evaluate(self.X, self.y, choice_distance=1, k=3)
 
         # 3) X e y vuoti
         empty_X = pd.DataFrame()
         empty_y = pd.Series(dtype=int)
         with self.assertRaises(ValueError):
-            LeaveOneOut(K=1).evaluate(empty_X, empty_y, k=3)
+            LeaveOneOut(K=1).evaluate(empty_X, empty_y, choice_distance=1, k=3)
 
         # 4) X e y di lunghezze diverse
         mismatched_y = self.y.iloc[:-1]  # L'ultimo elemento rimosso
         
         with self.assertRaises(ValueError):
-            self.loo.evaluate(self.X, mismatched_y, k=3)
+            self.loo.evaluate(self.X, mismatched_y, choice_distance=1, k=3)
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,17 @@ class metrics_visualizer():
         self.calculator = metrics_calculator()
         self.matrix = {}
         self.metrics = {}
+    
+    def get_avg_metrics(self, K = 1, num_camp_test = None) -> dict:
+        """
+        Calcola le metriche medie.
+        """
+        # calcoliamo le metriche
+        sample_size = int(num_camp_test/K)
+        self.metrics = self.calculator.compute_batch_metrics(self.actual_value, self.predicted_value, self.predicted_score, K, sample_size)
+        self.metrics=self.calculator.scegli_e_stampa_metriche(self.metrics)
+
+        return
 
     def visualizza_metriche(self) -> None:
         """
