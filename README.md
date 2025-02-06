@@ -21,6 +21,28 @@ Per utilizzare il classificatore k-NN, seguire questi passaggi:
 2. Assicurarsi di avere Python installato con le librerie `numpy` e `random`.
 3. Eseguire il file `main.py` per addestrare e testare il modello k-NN.
 
+## Docker 
+Per eseguire correttamente l'immagine docker su ambiente ospite, è necessario anzitutto scaricare la cartella nel proprio dispositivo.
+Se l'utente è in grado di usare una macchina con OS Linux (dove Docker è nativo dell'ambiente), verificare l'installazione di Docker tramite:
+
+''' docker --version '''
+
+se Docker non risulta installato, consultare 'https://docs.docker.com/engine/install/ubuntu/'.
+Successivamente, spostarsi nella directory dell'applicazione da eseguire:
+
+''' cd path_personale/Progetto_FIA_24-25_Gruppo2/ '''
+
+Una volta che ci troviamo nella directory, creare l'immagine dell'applicazione:
+
+''' docker build -t my-python-app . '''
+
+A questo punto verrà letto il file 'Dockerfile' nella cartella, e dopo qualche secondo saremo pronti a eseguire l'applicazione eseguendo il comando:
+
+''' docker run -it -v path_personale/Progetto_FIA_24-25_Gruppo2:/output my-python-app '''.
+
+che permette l'avvio di un container.
+In particolar modo, il decordatore '-it' permette l'eseguibilità in maniera interattiva dell'applicazione, '-v' consente invece il salvataggio dell'output dell'applicazione su una cartella su disco remoto.
+
 ## Dipendenze (file requirements.txt)
 - Python (3.x)
 - Numpy
