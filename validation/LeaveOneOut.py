@@ -137,7 +137,7 @@ class LeaveOneOut:
             
     def evaluate(self,X,y,k=3):       
         """
-            Metodo per valutare le prestazioni del modello KNN utilizzando il metodo Random Subsampling.
+            Metodo per valutare le prestazioni del modello KNN utilizzando il metodo LeaveOneOut.
 
             :param X: pandas DataFrame, rappresenta le feature del dataset.
             :param y: pandas Series, rappresenta le etichette di classe del dataset.

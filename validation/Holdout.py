@@ -127,7 +127,7 @@ class Holdout:
 
     def evaluate(self, X,y,k=3):
         """
-        Valuta le prestazioni del classificatore KNN utilizzando le metriche di validazione.
+        Valuta le prestazioni del classificatore KNN utilizzando il metodo Holdout.
 
         :param X: pandas DataFrame, rappresenta le feature del dataset.
         :param y: pandas Series, rappresenta le etichette di classe del dataset.
