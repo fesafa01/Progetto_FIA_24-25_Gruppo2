@@ -139,7 +139,7 @@ Una volta che ci troviamo nella directory, creare l'immagine dell'applicazione:
 
 A questo punto verrà letto il file 'Dockerfile' nella cartella, e dopo qualche secondo saremo pronti a eseguire l'applicazione eseguendo il comando:
 
-''' docker run -it -v path_personale/Progetto_FIA_24-25_Gruppo2:/output my-python-app '''.
+''' docker run -it -v /home/osboxes/Progetto_FIA_24-25_Gruppo2/output:/app/output my-python-app '''.
 
 che permette l'avvio di un container.
 In particolar modo, il decordatore '-it' permette l'eseguibilità in maniera interattiva dell'applicazione, '-v' consente invece il salvataggio dell'output dell'applicazione su una cartella su disco remoto.
